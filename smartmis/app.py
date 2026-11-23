@@ -1,5 +1,5 @@
 import json, os, logging
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -16,6 +16,9 @@ st.markdown("""<style>
 .card{background:#F2F5FA;border-radius:10px;padding:14px 16px;border-left:6px solid #1F3A5F;margin-bottom:10px}
 .card.green{border-color:#2E9E5B}.card.amber{border-color:#F2A900}.card.red{border-color:#D93025}
 .card .l{color:#555;font-size:13px;font-weight:600}.card .v{font-size:26px;font-weight:700;color:#1F3A5F}.card .d{font-size:12px;color:#555}
+.comm-box{background:#F8FAFC;border:1px solid #CBD5E1;border-left:5px solid #1F3A5F;border-radius:8px;padding:14px 18px;margin-bottom:16px}
+.comm-box h4{color:#1F3A5F;margin:0 0 6px 0;font-size:14px}
+.comm-box p{color:#333;margin:0;font-size:13px;line-height:1.5}
 .stat-pill{display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:bold;margin-right:4px}
 .pill-green{background:#E6F4EA;color:#137333}
 .pill-amber{background:#FEF7E0;color:#B06000}
@@ -28,8 +31,9 @@ core.init_central_db()
 @st.cache_resource
 def start_scheduler(_get_df):
     s = BackgroundScheduler()
-    s.add_job(lambda: core.run_scheduled(_get_df()), "cron", id="Weekly Foundry + Machine Shop + Rejection", **config.WEEKLY_CRON)
-    s.add_job(lambda: core.run_scheduled(_get_df()), "cron", id="Monthly Rejection Report", **config.MONTHLY_CRON)
+    sched_cfg = core.load_schedule_config()
+    s.add_job(lambda: core.run_scheduled_automation(_get_df()), "cron", id="Weekly Foundry + Machine Shop + Rejection", **sched_cfg.get("weekly", config.WEEKLY_CRON))
+    s.add_job(lambda: core.run_scheduled_automation(_get_df()), "cron", id="Monthly Rejection Report", **sched_cfg.get("monthly", config.MONTHLY_CRON))
     s.start(); return s
 
 # ---- PMS Integration & Ingestion Controller --------------------------------
@@ -182,7 +186,13 @@ f = core.apply_filters(df, dept, prods, d0, d1, shift, mach)
 
 st.caption(f"Period: **{d0:%d %b %Y} to {d1:%d %b %Y}**  |  Department: **{dept}**  |  Rejection Target: **{config.REJECTION_TARGET}%**  |  Records filtered: **{len(f):,}**")
 
-tab1, tab2, tab3, tab4 = st.tabs(["📊 Executive Dashboard", "🗓 Weekly MIS Reports", "📉 Monthly Rejection Analysis", "⏱ Scheduler & Automation"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "📊 Executive Dashboard",
+    "🗓 Weekly MIS Reports",
+    "📉 Monthly Rejection Analysis",
+    "⏱ Scheduler & Automation",
+    "📂 Report Archive"
+])
 
 # ==============================================================================
 # TAB 1: EXECUTIVE DASHBOARD
@@ -266,11 +276,29 @@ with tab1:
         fig_mach.update_layout(margin=dict(t=40, b=10))
         c2.plotly_chart(fig_mach, use_container_width=True)
 
-# Helper function to render downloadable reports
-def show(sheets, title, key):
+# Helper function to render downloadable reports with commentary and KPI band
+def show_template_report(template_id, key_prefix):
+    tpl = core.get_template(template_id)
+    if not tpl:
+        st.error(f"Template '{template_id}' not found.")
+        return
+        
+    sections, title, kpis_map, commentary, tpl_dict = core.prepare_template_report(df, tpl)
+    
     st.subheader(title)
-    for n, tb in sheets.items():
-        st.caption(f"**{n}**")
+    
+    # Display Plain-English Auto Commentary
+    if commentary:
+        st.markdown(f"""
+        <div class="comm-box">
+          <h4>💡 Automated Executive Commentary:</h4>
+          <p>{commentary.replace(chr(10)+chr(10), '</p><p style="margin-top:8px;">')}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Section Data Tables
+    for n, tb in sections.items():
+        st.caption(f"**Section: {n}**")
         st.dataframe(
             tb.style.map(
                 lambda v: "background:#F8CBAD;font-weight:bold" if isinstance(v, float) and v > config.REJECTION_TARGET else "",
@@ -279,28 +307,36 @@ def show(sheets, title, key):
             use_container_width=True,
             hide_index=True
         )
+    
+    # Generate Enhanced Exports
+    excel_bytes = core.to_excel_from_template(sections, title, kpi_dict=kpis_map, commentary=commentary, template=tpl_dict)
+    pdf_bytes = core.to_pdf_from_template(sections, title, kpi_dict=kpis_map, commentary=commentary, template=tpl_dict)
+    
     a, b = st.columns(2)
-    a.download_button("⬇ Download Formatted Excel (.xlsx)", core.to_excel(sheets, title), f"{key}.xlsx", key=key + "x", use_container_width=True)
-    b.download_button("⬇ Download Formatted PDF (.pdf)", core.to_pdf(sheets, title), f"{key}.pdf", key=key + "p", use_container_width=True)
+    a.download_button("⬇ Download Formatted Excel (.xlsx) [Landscape + Charts]", excel_bytes, f"{key_prefix}.xlsx", key=f"{key_prefix}_xl", use_container_width=True)
+    b.download_button("⬇ Download Executive PDF (.pdf) [Cover + Sign-Off]", pdf_bytes, f"{key_prefix}.pdf", key=f"{key_prefix}_pdf", use_container_width=True)
 
 # ==============================================================================
 # TAB 2: WEEKLY MIS REPORTS
 # ==============================================================================
 with tab2:
     d = st.radio("Select Department", ["Foundry", "Machine Shop"], horizontal=True)
-    show(*core.weekly_report(df, d), key="weekly_" + d.lower().replace(" ", "_"))
+    t_id = "weekly_foundry" if d == "Foundry" else "weekly_machine_shop"
+    show_template_report(t_id, f"weekly_{d.lower().replace(' ', '_')}")
 
 # ==============================================================================
 # TAB 3: MONTHLY REJECTION ANALYSIS
 # ==============================================================================
 with tab3:
-    show(*core.monthly_rejection_report(df), key="monthly_rejection")
+    show_template_report("monthly_rejection", "monthly_rejection")
 
 # ==============================================================================
-# TAB 4: SCHEDULER & AUTOMATION
+# TAB 4: SCHEDULER & DISPATCH CONTROL
 # ==============================================================================
 with tab4:
-    st.subheader("Automated Report Schedulers (APScheduler Engine)")
+    st.subheader("⏱️ Automated Report Schedulers (APScheduler Engine)")
+    
+    # Active Jobs Table
     st.dataframe(
         pd.DataFrame([
             {"Job ID": j.id, "Trigger": str(j.trigger), "Next Run Time": j.next_run_time.strftime("%a %d %b %Y %H:%M") if j.next_run_time else "Paused"}
@@ -310,13 +346,114 @@ with tab4:
         use_container_width=True
     )
     
-    col_run1, col_run2 = st.columns([1, 3])
-    if col_run1.button("▶ Trigger Run Now", type="primary", use_container_width=True):
-        generated = core.run_scheduled(df)
-        col_run2.success(f"Generated {len(generated)} report files into '{config.REPORT_DIR}/'")
-    
-    hist = f"{config.REPORT_DIR}/history.json"
-    if os.path.exists(hist):
+    # Schedule Configuration Editor
+    with st.expander("⚙️ Edit Automated Schedule & Email Delivery Settings", expanded=False):
+        sched_cfg = core.load_schedule_config()
+        
+        col_w1, col_w2 = st.columns(2)
+        day_names = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+        cur_w_day = sched_cfg.get("weekly", {}).get("day_of_week", "mon")
+        w_day = col_w1.selectbox("Weekly Day of Week", day_names, index=day_names.index(cur_w_day) if cur_w_day in day_names else 0)
+        w_hour = col_w2.number_input("Weekly Trigger Hour (0-23)", min_value=0, max_value=23, value=int(sched_cfg.get("weekly", {}).get("hour", 7)))
+        
+        col_m1, col_m2 = st.columns(2)
+        m_day = col_m1.number_input("Monthly Day of Month (1-28)", min_value=1, max_value=28, value=int(sched_cfg.get("monthly", {}).get("day", 1)))
+        m_hour = col_m2.number_input("Monthly Trigger Hour (0-23)", min_value=0, max_value=23, value=int(sched_cfg.get("monthly", {}).get("hour", 7)))
+        
+        st.markdown("##### ✉️ Email Dispatch Configuration")
+        email_recipients = st.text_input("Management Recipients (comma-separated)", value=sched_cfg.get("recipients", config.SMTP_TO))
+        col_em1, col_em2 = st.columns(2)
+        email_enabled = col_em1.checkbox("Enable Automated Email Dispatch", value=sched_cfg.get("email_enabled", True))
+        email_dry_run = col_em2.checkbox("SMTP Dry-Run Simulation Mode", value=sched_cfg.get("email_dry_run", config.SMTP_DRY_RUN))
+        
+        if st.button("💾 Save Schedule & Reschedule Engine", type="primary"):
+            new_cfg = {
+                "weekly": {"day_of_week": w_day, "hour": int(w_hour)},
+                "monthly": {"day": int(m_day), "hour": int(m_hour)},
+                "email_enabled": email_enabled,
+                "email_dry_run": email_dry_run,
+                "recipients": email_recipients,
+            }
+            core.save_schedule_config(new_cfg)
+            core.update_scheduler_job(sched, "Weekly Foundry + Machine Shop + Rejection", new_cfg["weekly"], lambda: df)
+            core.update_scheduler_job(sched, "Monthly Rejection Report", new_cfg["monthly"], lambda: df)
+            st.success("Successfully saved schedule configuration and re-armed APScheduler triggers!")
+            st.rerun()
+
+    # Execution Action Buttons
+    col_act1, col_act2, col_act3 = st.columns(3)
+    if col_act1.button("▶ Trigger Run Now", type="primary", use_container_width=True):
+        with st.spinner("Executing template engine and generating reports..."):
+            gen_files, meta = core.run_scheduled_automation(df)
+            st.success(f"Generated {len(gen_files)} files in '{config.REPORT_DIR}/' in {meta['duration_sec']}s! Email: {meta['email_delivery']}")
+            st.rerun()
+            
+    if col_act2.button("✉️ Test SMTP Email Dispatch", use_container_width=True):
+        archived = core.list_archived_reports()
+        if archived.empty:
+            st.warning("No generated reports found in archive to email. Click 'Trigger Run Now' first.")
+        else:
+            sample_paths = archived["Path"].head(2).tolist()
+            ok_em, msg_em = core.send_report_email(sample_paths, commentary="Manual dispatch test triggered from UI.")
+            if ok_em:
+                st.success(msg_em)
+            else:
+                st.error(msg_em)
+                
+    if col_act3.button("🔁 Retry Failed Deliverables", use_container_width=True):
+        with st.spinner("Retrying report generation..."):
+            gen_files, meta = core.run_scheduled_automation(df, max_retries=3)
+            st.success(f"Retry execution completed: {meta['status']} ({len(gen_files)} files generated).")
+            st.rerun()
+
+    # Detailed Audit Log History
+    hist_path = f"{config.REPORT_DIR}/history.json"
+    if os.path.exists(hist_path):
         st.markdown("---")
-        st.subheader("Report Dispatch History")
-        st.dataframe(pd.DataFrame(json.load(open(hist))[::-1]), hide_index=True, use_container_width=True)
+        st.subheader("📜 Report Generation & Dispatch Audit Log")
+        try:
+            hist_data = json.load(open(hist_path))
+            if hist_data:
+                hist_df = pd.DataFrame(hist_data[::-1])
+                cols_to_show = [c for c in ["time", "status", "duration_sec", "files_count", "email_delivery", "errors"] if c in hist_df.columns]
+                st.dataframe(hist_df[cols_to_show], hide_index=True, use_container_width=True)
+        except Exception as e:
+            st.caption(f"Error parsing history: {e}")
+
+# ==============================================================================
+# TAB 5: REPORT ARCHIVE & DOCUMENT LIBRARY
+# ==============================================================================
+with tab5:
+    st.subheader("📂 Report Archive & Document Library")
+    archived_df = core.list_archived_reports()
+    
+    if archived_df.empty:
+        st.info(f"No archived report files found in '{config.REPORT_DIR}/'. Trigger an automated report run to populate the archive.")
+    else:
+        col_f1, col_f2, col_f3 = st.columns([2, 2, 2])
+        type_filter = col_f1.selectbox("Filter Report Type", ["All"] + sorted(archived_df["Report Type"].unique().tolist()))
+        fmt_filter = col_f2.selectbox("Filter Format", ["All", "Excel (.xlsx)", "PDF (.pdf)"])
+        
+        filtered_archive = archived_df.copy()
+        if type_filter != "All":
+            filtered_archive = filtered_archive[filtered_archive["Report Type"] == type_filter]
+        if fmt_filter != "All":
+            filtered_archive = filtered_archive[filtered_archive["Format"] == fmt_filter]
+            
+        col_f3.metric("Archived Documents", f"{len(filtered_archive)} files", f"{round(filtered_archive['Size (KB)'].sum() / 1024.0, 2)} MB total")
+        
+        st.dataframe(filtered_archive[["Filename", "Report Type", "Format", "Size (KB)", "Generated At"]], hide_index=True, use_container_width=True)
+        
+        st.markdown("##### ⬇️ Re-Download Archived File")
+        sel_filename = st.selectbox("Select document to download", filtered_archive["Filename"].tolist())
+        if sel_filename:
+            file_match = filtered_archive[filtered_archive["Filename"] == sel_filename].iloc[0]
+            with open(file_match["Path"], "rb") as f_obj:
+                mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" if sel_filename.endswith(".xlsx") else "application/pdf"
+                st.download_button(
+                    label=f"⬇ Download {sel_filename}",
+                    data=f_obj.read(),
+                    file_name=sel_filename,
+                    mime=mime_type,
+                    type="primary"
+                )

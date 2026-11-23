@@ -16,9 +16,19 @@ htmlcov/
 
 # Local databases and runtime generated reports
 *.db
-smartmis/reports/
-reports/
 .env
+reports/*.xlsx
+reports/*.pdf
+reports/*.json
+reports/*.csv
+smartmis/reports/*.xlsx
+smartmis/reports/*.pdf
+smartmis/reports/*.json
+smartmis/reports/*.csv
+!reports/templates/
+!reports/templates/**
+!smartmis/reports/templates/
+!smartmis/reports/templates/**
 
 # Clones or nested workspaces
 SmartMIS-Manufacturing/

@@ -282,6 +282,44 @@ def sample_pms(
     return clean(df)
 
 
+def apply_filters(
+    df: pd.DataFrame,
+    dept: Optional[str] = None,
+    products: Optional[List[str]] = None,
+    start: Optional[date] = None,
+    end: Optional[date] = None,
+    shift: Optional[List[str]] = None,
+    machines: Optional[List[str]] = None,
+) -> pd.DataFrame:
+    """Filter production dataframe across multiple operational dimensions."""
+    if dept and dept != "All":
+        df = df[df["department"] == dept]
+    if products:
+        df = df[df["product"].isin(products)]
+    if shift:
+        df = df[df["shift"].isin(shift)]
+    if machines:
+        df = df[df["machine"].isin(machines)]
+    if start:
+        df = df[df["date"] >= start]
+    if end:
+        df = df[df["date"] <= end]
+    return df
+
+
+def kpis(df: pd.DataFrame) -> Dict[str, Any]:
+    """Compute basic production volume and rejection rate KPIs."""
+    if df.empty:
+        return {"Produced": 0, "Good": 0, "Rejected": 0, "Rejection %": 0.0}
+    p, r = float(df["produced"].sum()), float(df["rejected"].sum())
+    return {
+        "Produced": int(p),
+        "Good": int(p - r),
+        "Rejected": int(r),
+        "Rejection %": round(100.0 * r / p, 2) if p else 0.0,
+    }
+
+
 # ==============================================================================
 # 2. ETL CLEANING & DATA QUALITY
 # ==============================================================================

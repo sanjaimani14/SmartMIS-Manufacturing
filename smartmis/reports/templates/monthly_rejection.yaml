@@ -1,0 +1,71 @@
+id: monthly_rejection
+title: Monthly Plant-Wide Rejection Analysis Report
+department: All
+period_type: monthly
+period_days: 30
+target_rejection: 4.0
+signoff:
+  prepared_by: Central QA / SPC Lead
+  reviewed_by: VP Manufacturing & Quality Assurance
+
+kpis:
+  - id: Produced
+    label: Total Plant Production
+  - id: Good
+    label: Total Conforming Units
+  - id: Rejected
+    label: Total Defect Volume
+  - id: "Rejection %"
+    label: Plant Rejection Rate (%)
+  - id: Scrap
+    label: Total Scrapped Material
+  - id: Rework
+    label: Total Salvaged Rework
+  - id: "Plan Adherence %"
+    label: Plan Adherence (%)
+  - id: "Total Downtime (hrs)"
+    label: Total Lost Hours
+
+sections:
+  - id: by_defect
+    name: By Defect
+    type: defect_pareto
+    metrics: [rejected, share_%]
+    sort_by: rejected
+    sort_ascending: false
+  - id: by_department
+    name: By Department
+    groupby: [department]
+    metrics: [produced, rejected, rejection_%, scrap, rework]
+    sort_by: rejection_%
+    sort_ascending: false
+  - id: by_product
+    name: By Product
+    groupby: [product]
+    metrics: [produced, rejected, rejection_%, scrap, rework]
+    sort_by: rejection_%
+    sort_ascending: false
+  - id: daily_trend
+    name: Daily Trend
+    groupby: [date]
+    metrics: [produced, rejected, rejection_%]
+    sort_by: date
+    sort_ascending: true
+
+charts:
+  - section: by_defect
+    title: Defect Pareto Analysis (Top Non-Conformances)
+    type: bar
+    x: defect
+    y: rejected
+  - section: by_department
+    title: Departmental Rejection Comparison
+    type: bar
+    x: department
+    y: rejection_%
+  - section: daily_trend
+    title: 30-Day Plant Rejection Trend
+    type: line
+    x: date
+    y: rejection_%
+    target_line: true

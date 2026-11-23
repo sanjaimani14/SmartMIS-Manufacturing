@@ -1,17 +1,21 @@
-import io, json, os, logging, numpy as np, pandas as pd
-import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
-import config
+"""
+Facade and integration module for SmartMIS.
+Maintains 100% backwards-compatibility while delegating to specialized modules:
+data.py, reports.py, and scheduler.py.
+"""
+import io
+import json
+import logging
+import os
 from datetime import date, timedelta
-from openpyxl.chart import BarChart, Reference
-from openpyxl.styles import Font, PatternFill, Alignment
-from openpyxl.formatting.rule import CellIsRule
-from reportlab.platypus import Image
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-# Import and re-export data layer for 100% backwards-compatibility
+import numpy as np
+import pandas as pd
+
+import config
+
+# Import and re-export data layer
 from data import (
     PRODUCTS, MACHINES, DEFECTS, DEFECT_CATEGORIES, CUSTOMERS, PATTERN_MAP,
     DOWNTIME_REASONS, SHIFTS, CANONICAL_COLUMNS, DEFAULT_PRESETS,
@@ -22,118 +26,169 @@ from data import (
     get_ingestion_log, reset_central_db
 )
 
+# Import and re-export reporting layer
+from reports import (
+    find_template_dirs, list_templates, get_template, generate_commentary,
+    prepare_template_report, to_excel_from_template, to_pdf_from_template,
+    to_excel, to_pdf, send_report_email
+)
+
+# Import and re-export scheduler layer
+from scheduler import (
+    load_schedule_config, save_schedule_config, update_scheduler_job,
+    run_scheduled_automation, list_archived_reports
+)
+
 log = logging.getLogger('smartmis')
 
-def apply_filters(df, dept=None, products=None, start=None, end=None, shift=None, machines=None):
-    if dept and dept != "All": df = df[df.department == dept]
-    if products: df = df[df["product"].isin(products)]
-    if shift: df = df[df["shift"].isin(shift)]
-    if machines: df = df[df.machine.isin(machines)]
-    if start: df = df[df.date >= start]
-    if end: df = df[df.date <= end]
+
+def apply_filters(
+    df: pd.DataFrame,
+    dept: Optional[str] = None,
+    products: Optional[List[str]] = None,
+    start: Optional[date] = None,
+    end: Optional[date] = None,
+    shift: Optional[List[str]] = None,
+    machines: Optional[List[str]] = None,
+) -> pd.DataFrame:
+    """Filter production dataframe across multiple operational dimensions."""
+    if dept and dept != "All":
+        df = df[df["department"] == dept]
+    if products:
+        df = df[df["product"].isin(products)]
+    if shift:
+        df = df[df["shift"].isin(shift)]
+    if machines:
+        df = df[df["machine"].isin(machines)]
+    if start:
+        df = df[df["date"] >= start]
+    if end:
+        df = df[df["date"] <= end]
     return df
 
-def kpis(df):
-    p, r = df.produced.sum(), df.rejected.sum()
-    return {"Produced": int(p), "Good": int(p - r), "Rejected": int(r), "Rejection %": round(100 * r / p, 2) if p else 0}
 
-def _rate(g): 
-    g = g.agg(produced=("produced", "sum"), rejected=("rejected", "sum")).reset_index()
-    g["rejection_%"] = (100 * g.rejected / g.produced).round(2); return g
+def kpis(df: pd.DataFrame) -> Dict[str, Any]:
+    """Compute basic production volume and rejection rate KPIs."""
+    if df.empty:
+        return {"Produced": 0, "Good": 0, "Rejected": 0, "Rejection %": 0.0}
+    p, r = float(df["produced"].sum()), float(df["rejected"].sum())
+    return {
+        "Produced": int(p),
+        "Good": int(p - r),
+        "Rejected": int(r),
+        "Rejection %": round(100.0 * r / p, 2) if p else 0.0,
+    }
 
-def weekly_report(df, dept, end=None):
-    end = end or df.date.max(); w = apply_filters(df, dept, None, end - timedelta(days=6), end)
-    return {"Daily Trend": _rate(w.groupby("date")), "By Machine": _rate(w.groupby("machine")),
-            "By Product": _rate(w.groupby("product"))}, f"Weekly {dept} Report ({end - timedelta(days=6)} to {end})"
 
-def monthly_rejection_report(df, end=None):
-    end = end or df.date.max(); m = apply_filters(df, None, None, end - timedelta(days=29), end)
-    d = m[m.rejected > 0].groupby(["department", "defect"]).rejected.sum().reset_index().sort_values("rejected", ascending=False)
-    d["share_%"] = (100 * d.rejected / d.rejected.sum()).round(2)
-    return {"By Defect": d, "By Department": _rate(m.groupby("department")), "By Product": _rate(m.groupby("product")),
-            "Daily Trend": _rate(m.groupby("date"))}, f"Monthly Rejection Report ({end - timedelta(days=29)} to {end})"
+def _rate(g: Any) -> pd.DataFrame:
+    """Aggregate group object to calculate produced, rejected, and rate."""
+    res = g.agg(produced=("produced", "sum"), rejected=("rejected", "sum")).reset_index()
+    res["rejection_%"] = (100.0 * res["rejected"] / res["produced"].replace(0, np.nan)).fillna(0).round(2)
+    return res
 
-def period_bounds(df, choice, custom=None):
-    end = df.date.max()
-    if choice == "This week": return end - timedelta(days=6), end
-    if choice == "Last week": return end - timedelta(days=13), end - timedelta(days=7)
-    if choice == "This month": return end - timedelta(days=29), end
-    return (custom[0], custom[1]) if custom and len(custom) == 2 else (df.date.min(), end)
 
-def kpi_with_delta(df, dept, products, start, end, shift, machines):
-    """KPIs for the window and % change vs the previous window of equal length."""
+def weekly_report(df: pd.DataFrame, dept: str, end: Optional[date] = None) -> Tuple[Dict[str, pd.DataFrame], str]:
+    """Generate weekly performance and rejection report for Foundry or Machine Shop."""
+    tpl_id = "weekly_foundry" if dept == "Foundry" else "weekly_machine_shop"
+    tpl = get_template(tpl_id)
+    if tpl:
+        sections, title, _, _, _ = prepare_template_report(df, tpl, end_date=end)
+        return sections, title
+
+    # Fallback calculation
+    end = end or df["date"].max()
+    w = apply_filters(df, dept, start=end - timedelta(days=6), end=end)
+    return {
+        "Daily Trend": _rate(w.groupby("date")),
+        "By Machine": _rate(w.groupby("machine")),
+        "By Product": _rate(w.groupby("product")),
+    }, f"Weekly {dept} Report ({end - timedelta(days=6)} to {end})"
+
+
+def monthly_rejection_report(df: pd.DataFrame, end: Optional[date] = None) -> Tuple[Dict[str, pd.DataFrame], str]:
+    """Generate plant-wide monthly rejection analysis report."""
+    tpl = get_template("monthly_rejection")
+    if tpl:
+        sections, title, _, _, _ = prepare_template_report(df, tpl, end_date=end)
+        return sections, title
+
+    # Fallback calculation
+    end = end or df["date"].max()
+    m = apply_filters(df, None, start=end - timedelta(days=29), end=end)
+    d = (
+        m[m["rejected"] > 0]
+        .groupby(["department", "defect"])["rejected"]
+        .sum()
+        .reset_index()
+        .sort_values("rejected", ascending=False)
+    )
+    d["share_%"] = (100.0 * d["rejected"] / d["rejected"].sum()).round(2)
+    return {
+        "By Defect": d,
+        "By Department": _rate(m.groupby("department")),
+        "By Product": _rate(m.groupby("product")),
+        "Daily Trend": _rate(m.groupby("date")),
+    }, f"Monthly Rejection Report ({end - timedelta(days=29)} to {end})"
+
+
+def period_bounds(df: pd.DataFrame, choice: str, custom: Optional[Tuple[date, date]] = None) -> Tuple[date, date]:
+    """Compute date boundaries for UI period radio selections."""
+    end = df["date"].max()
+    if choice == "This week":
+        return end - timedelta(days=6), end
+    if choice == "Last week":
+        return end - timedelta(days=13), end - timedelta(days=7)
+    if choice == "This month":
+        return end - timedelta(days=29), end
+    return (custom[0], custom[1]) if custom and len(custom) == 2 else (df["date"].min(), end)
+
+
+def kpi_with_delta(
+    df: pd.DataFrame,
+    dept: Optional[str],
+    products: Optional[List[str]],
+    start: date,
+    end: date,
+    shift: Optional[List[str]],
+    machines: Optional[List[str]],
+) -> Tuple[Dict[str, Any], Dict[str, Optional[float]]]:
+    """Calculate current window KPIs and delta percentage against prior window."""
     cur = kpis(apply_filters(df, dept, products, start, end, shift, machines))
-    span = (end - start).days + 1; ps, pe = start - timedelta(days=span), start - timedelta(days=1)
+    span = (end - start).days + 1
+    ps, pe = start - timedelta(days=span), start - timedelta(days=1)
     prev = kpis(apply_filters(df, dept, products, ps, pe, shift, machines))
-    delta = {k: (round(100 * (cur[k] - prev[k]) / prev[k], 1) if prev[k] else None) for k in cur}
+
+    delta: Dict[str, Optional[float]] = {}
+    for k in cur:
+        if prev[k]:
+            delta[k] = round(100.0 * (cur[k] - prev[k]) / prev[k], 1)
+        else:
+            delta[k] = None
     delta["Rejection %"] = round(float(cur["Rejection %"]) - float(prev["Rejection %"]), 2)
     return cur, delta
 
-def status(rej):
-    return "green" if rej <= config.REJECTION_TARGET else ("amber" if rej <= config.AMBER_LIMIT else "red")
 
-def pareto(df):
-    d = df[df.rejected > 0].groupby("defect").rejected.sum().sort_values(ascending=False).reset_index()
-    d["cum_%"] = (100 * d.rejected.cumsum() / d.rejected.sum()).round(1); return d
+def status(rej: float) -> str:
+    """Return color status tag based on company thresholds."""
+    if rej <= config.REJECTION_TARGET:
+        return "green"
+    elif rej <= config.AMBER_LIMIT:
+        return "amber"
+    return "red"
 
-def to_excel(sheets, title):
-    buf = io.BytesIO(); navy = PatternFill("solid", fgColor="1F3A5F"); red = PatternFill("solid", bgColor="F8CBAD", fgColor="F8CBAD")
-    with pd.ExcelWriter(buf, engine="openpyxl") as xw:
-        for name, t in sheets.items():
-            t.to_excel(xw, sheet_name=name, index=False, startrow=3); ws = xw.sheets[name]
-            ws["A1"] = f"{config.COMPANY} - {title}"; ws["A1"].font = Font(size=14, bold=True, color="1F3A5F")
-            ws["A2"] = f"Generated {date.today():%d-%b-%Y} by SmartMIS"; ws["A2"].font = Font(italic=True, color="777777")
-            for c in ws[4]: c.fill, c.font, c.alignment = navy, Font(bold=True, color="FFFFFF"), Alignment(horizontal="center")
-            for col in ws.columns: ws.column_dimensions[col[0].column_letter].width = 18
-            ws.freeze_panes = "A5"
-            for col in ws.iter_cols(min_row=5, max_row=4 + len(t)):
-                for c in col:
-                    if isinstance(c.value, float): c.number_format = "0.00"
-                    elif isinstance(c.value, int): c.number_format = "#,##0"
-            if "rejection_%" in t.columns and len(t):
-                ci = t.columns.get_loc("rejection_%") + 1; L = ws.cell(4, ci).column_letter
-                ws.conditional_formatting.add(f"{L}5:{L}{4 + len(t)}", CellIsRule(operator="greaterThan", formula=[str(config.REJECTION_TARGET)], fill=red))
-                ch = BarChart(); ch.title = f"Rejection % - {name}"; ch.height, ch.width = 7.5, 15
-                ch.add_data(Reference(ws, min_col=ci, min_row=4, max_row=4 + len(t)), titles_from_data=True)
-                ch.set_categories(Reference(ws, min_col=1, min_row=5, max_row=4 + len(t))); ws.add_chart(ch, f"{ws.cell(1, len(t.columns) + 2).column_letter}4")
-    return buf.getvalue()
 
-def _chart_png(t, name):
-    fig, ax = plt.subplots(figsize=(7, 2.4)); x = t.iloc[:, 0].astype(str)
-    if "rejection_%" in t.columns:
-        (ax.plot(x, t["rejection_%"], color="#E8420C") if len(t) > 12 else ax.bar(x, t["rejection_%"], color="#1F3A5F"))
-        ax.axhline(config.REJECTION_TARGET, ls="--", color="grey", lw=.8); ax.set_ylabel("Rejection %", fontsize=8)
-    else: ax.bar(x, t.iloc[:, 2] if t.shape[1] > 2 else t.iloc[:, 1], color="#1F3A5F")
-    ax.set_title(name, fontsize=9, loc="left"); ax.tick_params(labelsize=7)
-    if len(t) > 12: ax.set_xticks(range(0, len(t), max(1, len(t) // 8)))
-    plt.xticks(rotation=30); [ax.spines[s].set_visible(False) for s in ("top", "right")]; fig.tight_layout()
-    b = io.BytesIO(); fig.savefig(b, format="png", dpi=130); plt.close(fig); b.seek(0); return b
+def pareto(df: pd.DataFrame) -> pd.DataFrame:
+    """Calculate defect Pareto breakdown with cumulative share percentage."""
+    rej_only = df[df["rejected"] > 0]
+    if rej_only.empty:
+        return pd.DataFrame(columns=["defect", "rejected", "cum_%"])
+    d = rej_only.groupby("defect")["rejected"].sum().sort_values(ascending=False).reset_index()
+    tot = d["rejected"].sum()
+    d["cum_%"] = (100.0 * d["rejected"].cumsum() / tot).round(1)
+    return d
 
-def to_pdf(sheets, title):
-    buf = io.BytesIO(); st = getSampleStyleSheet()
-    def footer(c, d):
-        c.setFont("Helvetica", 8); c.setFillColor(colors.grey)
-        c.drawString(36, 22, "Generated by SmartMIS"); c.drawRightString(A4[0] - 36, 22, f"Page {d.page}")
-    els = [Paragraph(f"{config.COMPANY}", st["Normal"]), Paragraph(title, st["Title"]), Paragraph(f"Generated {date.today():%d-%b-%Y}", st["Normal"]), Spacer(1, 10)]
-    first = next(iter(sheets.values()))
-    if "produced" in first.columns:
-        p, r = first.produced.sum(), first.rejected.sum()
-        kt = Table([["Produced", "Rejected", "Rejection %"], [f"{int(p):,}", f"{int(r):,}", f"{100 * r / p:.2f}" if p else "0"]], colWidths=[130] * 3)
-        kt.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#E8420C")), ("TEXTCOLOR", (0, 0), (-1, 0), colors.white), ("ALIGN", (0, 0), (-1, -1), "CENTER"), ("FONTSIZE", (0, 1), (-1, 1), 14)])); els += [kt, Spacer(1, 12)]
-    for name, t in sheets.items():
-        els += [Paragraph(name, st["Heading2"]), Image(_chart_png(t, name), width=440, height=150)]
-        tb = Table([list(t.columns)] + t.head(12).astype(str).values.tolist(), repeatRows=1)
-        tb.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1F3A5F")), ("TEXTCOLOR", (0, 0), (-1, 0), colors.white), ("GRID", (0, 0), (-1, -1), .25, colors.grey), ("FONTSIZE", (0, 0), (-1, -1), 8), ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F2F5FA")])]))
-        els += [tb, Spacer(1, 12)]
-    SimpleDocTemplate(buf, pagesize=A4, leftMargin=36, rightMargin=36).build(els, onFirstPage=footer, onLaterPages=footer); return buf.getvalue()
 
-def run_scheduled(df, outdir=None):
-    """Called by APScheduler / Run-now: writes weekly + monthly reports and logs history."""
-    outdir = outdir or config.REPORT_DIR; os.makedirs(outdir, exist_ok=True); stamp = date.today().isoformat(); out = []
-    jobs = [(weekly_report(df, "Foundry"), "weekly_foundry"), (weekly_report(df, "Machine Shop"), "weekly_machine_shop"), (monthly_rejection_report(df), "monthly_rejection")]
-    for (sheets, title), name in jobs:
-        for ext, fn in (("xlsx", to_excel), ("pdf", to_pdf)):
-            p = f"{outdir}/{name}_{stamp}.{ext}"; open(p, "wb").write(fn(sheets, title)); out.append(p)
-    hist = f"{outdir}/history.json"; h = json.load(open(hist)) if os.path.exists(hist) else []
-    h.append({"time": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M"), "files": len(out)}); json.dump(h[-20:], open(hist, "w"))
-    log.info("Generated %d report files", len(out)); return out
+def run_scheduled(df: pd.DataFrame, outdir: Optional[str] = None) -> List[str]:
+    """Execute automated reporting run and return list of generated file paths."""
+    files, _ = run_scheduled_automation(df, outdir=outdir)
+    return files

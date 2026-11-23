@@ -1,0 +1,71 @@
+id: weekly_foundry
+title: Weekly Foundry Performance & Rejection Report
+department: Foundry
+period_type: weekly
+period_days: 7
+target_rejection: 4.0
+signoff:
+  prepared_by: MIS Engineer / Foundry Quality
+  reviewed_by: Foundry Operations Head
+
+kpis:
+  - id: Produced
+    label: Total Castings Produced
+  - id: Good
+    label: Accepted Good Castings
+  - id: Rejected
+    label: Non-Conforming Castings
+  - id: "Rejection %"
+    label: Rejection Rate (%)
+  - id: Scrap
+    label: Melt-Back Scrap
+  - id: Rework
+    label: Rectified Castings
+  - id: "Plan Adherence %"
+    label: Schedule Adherence (%)
+  - id: "Total Downtime (hrs)"
+    label: Furnace & Moulding Downtime
+
+sections:
+  - id: daily_trend
+    name: Daily Trend
+    groupby: [date]
+    metrics: [produced, rejected, rejection_%, scrap, rework]
+    sort_by: date
+    sort_ascending: true
+  - id: by_machine
+    name: By Machine
+    groupby: [machine]
+    metrics: [produced, rejected, rejection_%, scrap, rework]
+    sort_by: rejection_%
+    sort_ascending: false
+  - id: by_product
+    name: By Product
+    groupby: [product]
+    metrics: [produced, rejected, rejection_%, scrap, rework]
+    sort_by: rejection_%
+    sort_ascending: false
+  - id: by_shift
+    name: By Shift
+    groupby: [shift]
+    metrics: [produced, rejected, rejection_%]
+    sort_by: shift
+    sort_ascending: true
+
+charts:
+  - section: daily_trend
+    title: Daily Foundry Rejection % Trend
+    type: line
+    x: date
+    y: rejection_%
+    target_line: true
+  - section: by_machine
+    title: Foundry Machine Rejection Rates
+    type: bar
+    x: machine
+    y: rejection_%
+  - section: by_product
+    title: Product Rejection Rates
+    type: bar
+    x: product
+    y: rejection_%
