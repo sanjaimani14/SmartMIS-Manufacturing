@@ -46,6 +46,24 @@ from kpis import (
     detect_anomalies, forecast_production_and_rejection, drill_down_level
 )
 
+# Import and re-export enterprise authentication & audit log
+from auth import (
+    authenticate_user, filter_data_by_role, log_audit_action,
+    get_audit_logs, load_users, save_users, DEFAULT_USERS, init_audit_db
+)
+
+# Import and re-export natural language query engine
+from nlp_query import (
+    ask_your_data, parse_query_rule_based, execute_whitelisted_query,
+    WHITELISTED_FUNCTIONS
+)
+
+# Import and re-export executive briefing and Power BI integration
+from executive import (
+    generate_smart_insights, generate_executive_summary_pdf,
+    export_powerbi_dataset, get_powerbi_guide
+)
+
 log = logging.getLogger('smartmis')
 
 

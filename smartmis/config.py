@@ -13,6 +13,9 @@ COMPANY = "SmartMIS Manufacturing"
 
 # Central database configuration
 DB_PATH = os.getenv("SMARTMIS_DB_PATH", "smartmis.db")
+SETTINGS_FILE = os.getenv("SMARTMIS_SETTINGS_FILE", "enterprise_settings.json")
+USERS_FILE = os.getenv("SMARTMIS_USERS_FILE", "users.json")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 # External PMS connection settings
 PMS_DATABASE_URL = os.getenv("PMS_DATABASE_URL", "sqlite:///pms_external.db")
