@@ -1,7 +1,6 @@
 import io, json, os, logging, numpy as np, pandas as pd
 import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
 import config
-log = logging.getLogger('smartmis')
 from datetime import date, timedelta
 from openpyxl.chart import BarChart, Reference
 from openpyxl.styles import Font, PatternFill, Alignment
@@ -12,36 +11,18 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
 
-PRODUCTS = {"Foundry": ["Brake Drum", "Hub Housing", "Pump Casing", "Flywheel"],
-            "Machine Shop": ["Brake Drum", "Hub Housing", "Pump Casing", "Gear Blank"]}
-MACHINES = {"Foundry": ["Furnace-1", "Furnace-2", "Moulding-A", "Moulding-B"],
-            "Machine Shop": ["CNC-01", "CNC-02", "VMC-01", "Lathe-01"]}
-DEFECTS = {"Foundry": ["Blow Hole", "Shrinkage", "Sand Inclusion", "Cold Shut"],
-           "Machine Shop": ["Oversize", "Undersize", "Surface Finish", "Tool Mark"]}
+# Import and re-export data layer for 100% backwards-compatibility
+from data import (
+    PRODUCTS, MACHINES, DEFECTS, DEFECT_CATEGORIES, CUSTOMERS, PATTERN_MAP,
+    DOWNTIME_REASONS, SHIFTS, CANONICAL_COLUMNS, DEFAULT_PRESETS,
+    sample_pms, clean, quality_issues, auto_map_columns, apply_column_mapping,
+    save_mapping_preset, load_mapping_presets, read_uploaded_file,
+    test_sql_connection, fetch_sql, seed_mock_sql_db, fetch_api_pms,
+    init_central_db, save_sqlite, load_sqlite, incremental_load,
+    get_ingestion_log, reset_central_db
+)
 
-def sample_pms(days=90, seed=7):
-    """Synthetic PMS extract: one row per day/department/machine/product."""
-    rng = np.random.default_rng(seed); rows = []
-    for d in range(days):
-        dt = date.today() - timedelta(days=days - 1 - d)
-        for dept in PRODUCTS:
-            for m in MACHINES[dept]:
-                p = rng.choice(PRODUCTS[dept]); prod = int(rng.integers(80, 220))
-                rej = int(prod * rng.uniform(0.01, 0.09 if dept == "Foundry" else 0.06))
-                rows.append([dt, dept, m, p, prod, rej, rng.choice(DEFECTS[dept]) if rej else "None", rng.choice(["A", "B", "C"])])
-    return clean(pd.DataFrame(rows, columns=["date", "department", "machine", "product", "produced", "rejected", "defect", "shift"]))
-
-def clean(df):
-    """ETL: standardise column names, validate and derive KPIs."""
-    df = df.copy(); df.columns = [c.strip().lower() for c in df.columns]
-    need = {"date", "department", "machine", "product", "produced", "rejected", "defect"}
-    if need - set(df.columns): raise ValueError(f"Missing columns: {sorted(need - set(df.columns))}")
-    if "shift" not in df: df["shift"] = "NA"
-    df["date"] = pd.to_datetime(df["date"]).dt.date
-    df = df.dropna(subset=["produced"]).drop_duplicates()
-    df["rejected"] = df["rejected"].fillna(0).clip(lower=0)
-    df["good"] = df["produced"] - df["rejected"]
-    return df
+log = logging.getLogger('smartmis')
 
 def apply_filters(df, dept=None, products=None, start=None, end=None, shift=None, machines=None):
     if dept and dept != "All": df = df[df.department == dept]
@@ -71,18 +52,6 @@ def monthly_rejection_report(df, end=None):
     d["share_%"] = (100 * d.rejected / d.rejected.sum()).round(2)
     return {"By Defect": d, "By Department": _rate(m.groupby("department")), "By Product": _rate(m.groupby("product")),
             "Daily Trend": _rate(m.groupby("date"))}, f"Monthly Rejection Report ({end - timedelta(days=29)} to {end})"
-
-def quality_issues(raw):
-    """Data-quality checks on a raw PMS extract. Returns list of (level, message)."""
-    need = {"date", "department", "machine", "product", "produced", "rejected", "defect"}
-    cols = {c.strip().lower() for c in raw.columns}
-    if need - cols: return [("error", f"Missing columns: {sorted(need - cols)}")]
-    d = raw.copy(); d.columns = [c.strip().lower() for c in d.columns]; out = []
-    if d.produced.isna().sum(): out.append(("warning", f"{int(d.produced.isna().sum())} rows with empty 'produced' were dropped"))
-    if (d.produced < 0).sum() or (d.rejected < 0).sum(): out.append(("warning", "Negative quantities found (rejected clipped to 0)"))
-    if (d.rejected > d.produced).sum(): out.append(("warning", f"{int((d.rejected > d.produced).sum())} rows where rejected > produced"))
-    if d.duplicated().sum(): out.append(("warning", f"{int(d.duplicated().sum())} duplicate rows removed"))
-    return out or [("ok", f"All checks passed ({len(d):,} rows)")]
 
 def period_bounds(df, choice, custom=None):
     end = df.date.max()
@@ -168,12 +137,3 @@ def run_scheduled(df, outdir=None):
     hist = f"{outdir}/history.json"; h = json.load(open(hist)) if os.path.exists(hist) else []
     h.append({"time": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M"), "files": len(out)}); json.dump(h[-20:], open(hist, "w"))
     log.info("Generated %d report files", len(out)); return out
-
-def save_sqlite(df, path="smartmis.db"):
-    """Central database step: persist cleaned PMS data, then read back for reporting."""
-    import sqlite3; con = sqlite3.connect(path)
-    df.to_sql("pms_data", con, if_exists="replace", index=False); con.close()
-
-def load_sqlite(path="smartmis.db"):
-    import sqlite3; con = sqlite3.connect(path)
-    df = pd.read_sql("select * from pms_data", con); con.close(); df["date"] = pd.to_datetime(df["date"]).dt.date; return df

@@ -18,6 +18,10 @@ htmlcov/
 *.db
 smartmis/reports/
 reports/
+.env
+
+# Clones or nested workspaces
+SmartMIS-Manufacturing/
 
 # Operating System and IDE files
 .DS_Store
