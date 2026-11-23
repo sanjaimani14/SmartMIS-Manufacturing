@@ -64,6 +64,13 @@ from executive import (
     export_powerbi_dataset, get_powerbi_guide
 )
 
+# Import and re-export demo simulation, ROI, and requirement mapping
+from demo import (
+    generate_streaming_batch, inject_defect_spike,
+    compute_time_saved_roi, get_requirement_checklist,
+    DEFAULT_ROI_ASSUMPTIONS
+)
+
 log = logging.getLogger('smartmis')
 
 

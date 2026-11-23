@@ -1,0 +1,36 @@
+services:
+  smartmis-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartmis-app
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - COMPANY=Sakthi Automotive Foundries & Machining Ltd
+      - REJECTION_TARGET=2.5
+      - PMS_DATABASE_URL=sqlite:////app/smartmis/smartmis.db
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - ALERT_EMAIL_RECIPIENT=${ALERT_EMAIL_RECIPIENT:-planthead@sakthiauto.com}
+    volumes:
+      - ./smartmis/reports/templates:/app/smartmis/reports/templates:ro
+      - ./data:/app/data
+    depends_on:
+      - mock-pms
+
+  mock-pms:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartmis-mock-pms
+    restart: unless-stopped
+    command: ["python", "-m", "mock_pms.server"]
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
