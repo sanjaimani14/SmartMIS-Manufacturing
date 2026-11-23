@@ -1,0 +1,721 @@
+date,department,machine,product,produced,rejected,defect,shift
+2026-08-16,Foundry,Furnace-1,Flywheel,167,13,Sand Inclusion,C
+2026-08-16,Foundry,Furnace-2,Flywheel,111,3,Shrinkage,C
+2026-08-16,Foundry,Moulding-A,Flywheel,80,6,Blow Hole,C
+2026-08-16,Foundry,Moulding-B,Brake Drum,145,4,Shrinkage,A
+2026-08-16,Machine Shop,CNC-01,Pump Casing,115,3,Undersize,B
+2026-08-16,Machine Shop,CNC-02,Pump Casing,157,9,Tool Mark,C
+2026-08-16,Machine Shop,VMC-01,Pump Casing,167,9,Undersize,A
+2026-08-16,Machine Shop,Lathe-01,Gear Blank,102,4,Oversize,A
+2026-08-17,Foundry,Furnace-1,Hub Housing,84,4,Cold Shut,B
+2026-08-17,Foundry,Furnace-2,Flywheel,208,12,Shrinkage,B
+2026-08-17,Foundry,Moulding-A,Hub Housing,149,4,Cold Shut,A
+2026-08-17,Foundry,Moulding-B,Brake Drum,106,6,Cold Shut,A
+2026-08-17,Machine Shop,CNC-01,Pump Casing,131,1,Surface Finish,C
+2026-08-17,Machine Shop,CNC-02,Pump Casing,101,2,Tool Mark,C
+2026-08-17,Machine Shop,VMC-01,Brake Drum,151,7,Surface Finish,B
+2026-08-17,Machine Shop,Lathe-01,Brake Drum,183,2,Oversize,B
+2026-08-18,Foundry,Furnace-1,Pump Casing,151,12,Sand Inclusion,B
+2026-08-18,Foundry,Furnace-2,Pump Casing,163,2,Sand Inclusion,B
+2026-08-18,Foundry,Moulding-A,Pump Casing,125,2,Shrinkage,C
+2026-08-18,Foundry,Moulding-B,Hub Housing,133,11,Shrinkage,B
+2026-08-18,Machine Shop,CNC-01,Hub Housing,164,6,Surface Finish,C
+2026-08-18,Machine Shop,CNC-02,Gear Blank,101,3,Undersize,A
+2026-08-18,Machine Shop,VMC-01,Brake Drum,136,2,Undersize,C
+2026-08-18,Machine Shop,Lathe-01,Gear Blank,110,4,Oversize,A
+2026-08-19,Foundry,Furnace-1,Hub Housing,202,12,Sand Inclusion,A
+2026-08-19,Foundry,Furnace-2,Flywheel,198,16,Sand Inclusion,C
+2026-08-19,Foundry,Moulding-A,Flywheel,159,3,Sand Inclusion,A
+2026-08-19,Foundry,Moulding-B,Flywheel,209,11,Blow Hole,A
+2026-08-19,Machine Shop,CNC-01,Hub Housing,203,8,Surface Finish,B
+2026-08-19,Machine Shop,CNC-02,Brake Drum,132,4,Oversize,A
+2026-08-19,Machine Shop,VMC-01,Pump Casing,85,4,Surface Finish,B
+2026-08-19,Machine Shop,Lathe-01,Gear Blank,156,4,Undersize,C
+2026-08-20,Foundry,Furnace-1,Brake Drum,83,3,Cold Shut,A
+2026-08-20,Foundry,Furnace-2,Flywheel,97,8,Blow Hole,B
+2026-08-20,Foundry,Moulding-A,Pump Casing,139,7,Shrinkage,C
+2026-08-20,Foundry,Moulding-B,Pump Casing,128,7,Shrinkage,C
+2026-08-20,Machine Shop,CNC-01,Gear Blank,129,4,Surface Finish,C
+2026-08-20,Machine Shop,CNC-02,Gear Blank,207,3,Undersize,C
+2026-08-20,Machine Shop,VMC-01,Hub Housing,80,3,Surface Finish,C
+2026-08-20,Machine Shop,Lathe-01,Pump Casing,99,3,Tool Mark,C
+2026-08-21,Foundry,Furnace-1,Flywheel,81,4,Shrinkage,C
+2026-08-21,Foundry,Furnace-2,Flywheel,151,10,Blow Hole,A
+2026-08-21,Foundry,Moulding-A,Brake Drum,107,4,Blow Hole,A
+2026-08-21,Foundry,Moulding-B,Hub Housing,128,10,Cold Shut,B
+2026-08-21,Machine Shop,CNC-01,Gear Blank,127,2,Oversize,C
+2026-08-21,Machine Shop,CNC-02,Brake Drum,142,8,Oversize,B
+2026-08-21,Machine Shop,VMC-01,Gear Blank,152,8,Tool Mark,C
+2026-08-21,Machine Shop,Lathe-01,Pump Casing,161,5,Tool Mark,C
+2026-08-22,Foundry,Furnace-1,Hub Housing,137,11,Blow Hole,A
+2026-08-22,Foundry,Furnace-2,Brake Drum,140,7,Sand Inclusion,C
+2026-08-22,Foundry,Moulding-A,Pump Casing,115,8,Sand Inclusion,C
+2026-08-22,Foundry,Moulding-B,Hub Housing,180,10,Cold Shut,C
+2026-08-22,Machine Shop,CNC-01,Hub Housing,126,3,Surface Finish,A
+2026-08-22,Machine Shop,CNC-02,Brake Drum,87,1,Undersize,C
+2026-08-22,Machine Shop,VMC-01,Gear Blank,197,3,Surface Finish,B
+2026-08-22,Machine Shop,Lathe-01,Gear Blank,147,5,Undersize,B
+2026-08-23,Foundry,Furnace-1,Hub Housing,122,10,Cold Shut,B
+2026-08-23,Foundry,Furnace-2,Brake Drum,167,10,Blow Hole,A
+2026-08-23,Foundry,Moulding-A,Pump Casing,88,3,Blow Hole,C
+2026-08-23,Foundry,Moulding-B,Pump Casing,194,13,Cold Shut,A
+2026-08-23,Machine Shop,CNC-01,Gear Blank,207,10,Surface Finish,C
+2026-08-23,Machine Shop,CNC-02,Gear Blank,153,8,Undersize,A
+2026-08-23,Machine Shop,VMC-01,Brake Drum,84,0,None,A
+2026-08-23,Machine Shop,Lathe-01,Hub Housing,178,3,Oversize,C
+2026-08-24,Foundry,Furnace-1,Pump Casing,114,6,Blow Hole,A
+2026-08-24,Foundry,Furnace-2,Brake Drum,96,1,Sand Inclusion,B
+2026-08-24,Foundry,Moulding-A,Hub Housing,159,8,Cold Shut,B
+2026-08-24,Foundry,Moulding-B,Flywheel,141,8,Sand Inclusion,A
+2026-08-24,Machine Shop,CNC-01,Brake Drum,186,2,Surface Finish,A
+2026-08-24,Machine Shop,CNC-02,Gear Blank,145,7,Tool Mark,A
+2026-08-24,Machine Shop,VMC-01,Brake Drum,161,4,Undersize,A
+2026-08-24,Machine Shop,Lathe-01,Brake Drum,122,6,Surface Finish,A
+2026-08-25,Foundry,Furnace-1,Hub Housing,172,12,Cold Shut,A
+2026-08-25,Foundry,Furnace-2,Brake Drum,195,15,Cold Shut,B
+2026-08-25,Foundry,Moulding-A,Brake Drum,161,9,Sand Inclusion,A
+2026-08-25,Foundry,Moulding-B,Pump Casing,191,12,Blow Hole,A
+2026-08-25,Machine Shop,CNC-01,Pump Casing,207,10,Tool Mark,B
+2026-08-25,Machine Shop,CNC-02,Hub Housing,91,4,Surface Finish,B
+2026-08-25,Machine Shop,VMC-01,Gear Blank,99,1,Oversize,B
+2026-08-25,Machine Shop,Lathe-01,Pump Casing,172,6,Oversize,B
+2026-08-26,Foundry,Furnace-1,Flywheel,205,6,Shrinkage,C
+2026-08-26,Foundry,Furnace-2,Hub Housing,219,3,Sand Inclusion,B
+2026-08-26,Foundry,Moulding-A,Hub Housing,198,12,Blow Hole,C
+2026-08-26,Foundry,Moulding-B,Flywheel,153,6,Shrinkage,B
+2026-08-26,Machine Shop,CNC-01,Pump Casing,121,2,Oversize,A
+2026-08-26,Machine Shop,CNC-02,Hub Housing,199,2,Undersize,B
+2026-08-26,Machine Shop,VMC-01,Gear Blank,188,4,Surface Finish,A
+2026-08-26,Machine Shop,Lathe-01,Brake Drum,107,1,Tool Mark,B
+2026-08-27,Foundry,Furnace-1,Brake Drum,198,3,Blow Hole,C
+2026-08-27,Foundry,Furnace-2,Flywheel,182,6,Shrinkage,C
+2026-08-27,Foundry,Moulding-A,Flywheel,147,3,Sand Inclusion,A
+2026-08-27,Foundry,Moulding-B,Hub Housing,105,4,Cold Shut,A
+2026-08-27,Machine Shop,CNC-01,Pump Casing,143,6,Oversize,A
+2026-08-27,Machine Shop,CNC-02,Gear Blank,154,6,Tool Mark,B
+2026-08-27,Machine Shop,VMC-01,Hub Housing,181,6,Oversize,C
+2026-08-27,Machine Shop,Lathe-01,Gear Blank,194,4,Oversize,C
+2026-08-28,Foundry,Furnace-1,Pump Casing,109,8,Sand Inclusion,B
+2026-08-28,Foundry,Furnace-2,Brake Drum,204,15,Blow Hole,B
+2026-08-28,Foundry,Moulding-A,Pump Casing,98,8,Sand Inclusion,B
+2026-08-28,Foundry,Moulding-B,Flywheel,190,13,Cold Shut,B
+2026-08-28,Machine Shop,CNC-01,Hub Housing,123,2,Surface Finish,C
+2026-08-28,Machine Shop,CNC-02,Gear Blank,162,7,Tool Mark,A
+2026-08-28,Machine Shop,VMC-01,Hub Housing,100,3,Undersize,B
+2026-08-28,Machine Shop,Lathe-01,Brake Drum,127,4,Tool Mark,A
+2026-08-29,Foundry,Furnace-1,Hub Housing,215,14,Sand Inclusion,C
+2026-08-29,Foundry,Furnace-2,Hub Housing,84,7,Cold Shut,B
+2026-08-29,Foundry,Moulding-A,Hub Housing,191,13,Blow Hole,C
+2026-08-29,Foundry,Moulding-B,Flywheel,98,6,Blow Hole,C
+2026-08-29,Machine Shop,CNC-01,Gear Blank,132,2,Tool Mark,B
+2026-08-29,Machine Shop,CNC-02,Brake Drum,175,2,Tool Mark,A
+2026-08-29,Machine Shop,VMC-01,Brake Drum,154,4,Surface Finish,C
+2026-08-29,Machine Shop,Lathe-01,Gear Blank,199,11,Oversize,C
+2026-08-30,Foundry,Furnace-1,Brake Drum,198,3,Cold Shut,A
+2026-08-30,Foundry,Furnace-2,Hub Housing,101,3,Blow Hole,B
+2026-08-30,Foundry,Moulding-A,Hub Housing,142,6,Sand Inclusion,C
+2026-08-30,Foundry,Moulding-B,Brake Drum,211,17,Cold Shut,A
+2026-08-30,Machine Shop,CNC-01,Gear Blank,172,5,Oversize,C
+2026-08-30,Machine Shop,CNC-02,Brake Drum,152,1,Oversize,C
+2026-08-30,Machine Shop,VMC-01,Pump Casing,197,3,Oversize,B
+2026-08-30,Machine Shop,Lathe-01,Gear Blank,165,3,Undersize,A
+2026-08-31,Foundry,Furnace-1,Pump Casing,199,10,Shrinkage,C
+2026-08-31,Foundry,Furnace-2,Hub Housing,195,11,Sand Inclusion,B
+2026-08-31,Foundry,Moulding-A,Pump Casing,219,16,Shrinkage,A
+2026-08-31,Foundry,Moulding-B,Flywheel,133,2,Blow Hole,B
+2026-08-31,Machine Shop,CNC-01,Brake Drum,156,8,Tool Mark,A
+2026-08-31,Machine Shop,CNC-02,Brake Drum,174,3,Tool Mark,C
+2026-08-31,Machine Shop,VMC-01,Pump Casing,141,7,Undersize,C
+2026-08-31,Machine Shop,Lathe-01,Brake Drum,186,7,Undersize,C
+2026-09-01,Foundry,Furnace-1,Brake Drum,151,7,Blow Hole,C
+2026-09-01,Foundry,Furnace-2,Flywheel,94,7,Cold Shut,C
+2026-09-01,Foundry,Moulding-A,Flywheel,196,15,Sand Inclusion,C
+2026-09-01,Foundry,Moulding-B,Pump Casing,216,7,Sand Inclusion,A
+2026-09-01,Machine Shop,CNC-01,Brake Drum,91,1,Tool Mark,B
+2026-09-01,Machine Shop,CNC-02,Gear Blank,197,5,Surface Finish,C
+2026-09-01,Machine Shop,VMC-01,Gear Blank,162,5,Oversize,A
+2026-09-01,Machine Shop,Lathe-01,Brake Drum,103,3,Tool Mark,B
+2026-09-02,Foundry,Furnace-1,Flywheel,94,6,Shrinkage,B
+2026-09-02,Foundry,Furnace-2,Pump Casing,192,16,Sand Inclusion,A
+2026-09-02,Foundry,Moulding-A,Hub Housing,111,7,Shrinkage,A
+2026-09-02,Foundry,Moulding-B,Flywheel,180,11,Shrinkage,B
+2026-09-02,Machine Shop,CNC-01,Brake Drum,86,4,Surface Finish,A
+2026-09-02,Machine Shop,CNC-02,Brake Drum,183,1,Surface Finish,B
+2026-09-02,Machine Shop,VMC-01,Gear Blank,186,5,Undersize,A
+2026-09-02,Machine Shop,Lathe-01,Pump Casing,155,7,Surface Finish,C
+2026-09-03,Foundry,Furnace-1,Brake Drum,213,11,Sand Inclusion,A
+2026-09-03,Foundry,Furnace-2,Flywheel,168,7,Blow Hole,A
+2026-09-03,Foundry,Moulding-A,Pump Casing,89,1,Sand Inclusion,C
+2026-09-03,Foundry,Moulding-B,Pump Casing,125,3,Blow Hole,A
+2026-09-03,Machine Shop,CNC-01,Gear Blank,151,4,Oversize,C
+2026-09-03,Machine Shop,CNC-02,Gear Blank,210,7,Surface Finish,B
+2026-09-03,Machine Shop,VMC-01,Gear Blank,101,4,Undersize,A
+2026-09-03,Machine Shop,Lathe-01,Gear Blank,131,5,Surface Finish,B
+2026-09-04,Foundry,Furnace-1,Hub Housing,94,3,Sand Inclusion,A
+2026-09-04,Foundry,Furnace-2,Pump Casing,209,9,Shrinkage,A
+2026-09-04,Foundry,Moulding-A,Flywheel,203,7,Sand Inclusion,A
+2026-09-04,Foundry,Moulding-B,Flywheel,192,14,Shrinkage,A
+2026-09-04,Machine Shop,CNC-01,Gear Blank,214,9,Undersize,C
+2026-09-04,Machine Shop,CNC-02,Brake Drum,178,9,Undersize,A
+2026-09-04,Machine Shop,VMC-01,Pump Casing,149,6,Surface Finish,C
+2026-09-04,Machine Shop,Lathe-01,Pump Casing,115,3,Surface Finish,A
+2026-09-05,Foundry,Furnace-1,Brake Drum,128,4,Shrinkage,A
+2026-09-05,Foundry,Furnace-2,Hub Housing,159,6,Cold Shut,A
+2026-09-05,Foundry,Moulding-A,Hub Housing,209,11,Shrinkage,C
+2026-09-05,Foundry,Moulding-B,Flywheel,119,4,Cold Shut,B
+2026-09-05,Machine Shop,CNC-01,Hub Housing,124,4,Tool Mark,C
+2026-09-05,Machine Shop,CNC-02,Pump Casing,98,5,Oversize,A
+2026-09-05,Machine Shop,VMC-01,Hub Housing,155,3,Undersize,C
+2026-09-05,Machine Shop,Lathe-01,Hub Housing,118,6,Tool Mark,A
+2026-09-06,Foundry,Furnace-1,Hub Housing,193,9,Cold Shut,C
+2026-09-06,Foundry,Furnace-2,Hub Housing,172,4,Sand Inclusion,B
+2026-09-06,Foundry,Moulding-A,Hub Housing,152,10,Sand Inclusion,B
+2026-09-06,Foundry,Moulding-B,Brake Drum,105,7,Sand Inclusion,B
+2026-09-06,Machine Shop,CNC-01,Hub Housing,114,5,Oversize,B
+2026-09-06,Machine Shop,CNC-02,Brake Drum,130,3,Surface Finish,A
+2026-09-06,Machine Shop,VMC-01,Pump Casing,204,6,Undersize,A
+2026-09-06,Machine Shop,Lathe-01,Pump Casing,203,4,Surface Finish,A
+2026-09-07,Foundry,Furnace-1,Flywheel,128,4,Shrinkage,A
+2026-09-07,Foundry,Furnace-2,Hub Housing,135,5,Blow Hole,C
+2026-09-07,Foundry,Moulding-A,Flywheel,133,3,Sand Inclusion,A
+2026-09-07,Foundry,Moulding-B,Brake Drum,86,6,Shrinkage,B
+2026-09-07,Machine Shop,CNC-01,Hub Housing,187,8,Tool Mark,B
+2026-09-07,Machine Shop,CNC-02,Pump Casing,192,9,Tool Mark,A
+2026-09-07,Machine Shop,VMC-01,Hub Housing,110,3,Undersize,A
+2026-09-07,Machine Shop,Lathe-01,Hub Housing,89,2,Oversize,A
+2026-09-08,Foundry,Furnace-1,Pump Casing,149,3,Blow Hole,B
+2026-09-08,Foundry,Furnace-2,Brake Drum,212,18,Shrinkage,A
+2026-09-08,Foundry,Moulding-A,Brake Drum,81,1,Blow Hole,C
+2026-09-08,Foundry,Moulding-B,Hub Housing,198,9,Blow Hole,A
+2026-09-08,Machine Shop,CNC-01,Brake Drum,83,4,Undersize,B
+2026-09-08,Machine Shop,CNC-02,Brake Drum,142,4,Surface Finish,C
+2026-09-08,Machine Shop,VMC-01,Hub Housing,145,2,Tool Mark,B
+2026-09-08,Machine Shop,Lathe-01,Gear Blank,109,4,Tool Mark,A
+2026-09-09,Foundry,Furnace-1,Brake Drum,83,4,Sand Inclusion,B
+2026-09-09,Foundry,Furnace-2,Flywheel,212,18,Blow Hole,A
+2026-09-09,Foundry,Moulding-A,Flywheel,100,3,Blow Hole,A
+2026-09-09,Foundry,Moulding-B,Brake Drum,199,16,Cold Shut,C
+2026-09-09,Machine Shop,CNC-01,Gear Blank,132,5,Surface Finish,C
+2026-09-09,Machine Shop,CNC-02,Pump Casing,134,7,Surface Finish,C
+2026-09-09,Machine Shop,VMC-01,Pump Casing,187,6,Undersize,A
+2026-09-09,Machine Shop,Lathe-01,Brake Drum,135,6,Surface Finish,B
+2026-09-10,Foundry,Furnace-1,Hub Housing,181,12,Cold Shut,A
+2026-09-10,Foundry,Furnace-2,Hub Housing,153,3,Blow Hole,B
+2026-09-10,Foundry,Moulding-A,Brake Drum,117,5,Shrinkage,B
+2026-09-10,Foundry,Moulding-B,Flywheel,81,6,Shrinkage,C
+2026-09-10,Machine Shop,CNC-01,Pump Casing,132,3,Tool Mark,B
+2026-09-10,Machine Shop,CNC-02,Brake Drum,92,2,Tool Mark,A
+2026-09-10,Machine Shop,VMC-01,Brake Drum,88,3,Tool Mark,C
+2026-09-10,Machine Shop,Lathe-01,Brake Drum,112,6,Undersize,C
+2026-09-11,Foundry,Furnace-1,Hub Housing,180,3,Sand Inclusion,A
+2026-09-11,Foundry,Furnace-2,Flywheel,152,7,Blow Hole,B
+2026-09-11,Foundry,Moulding-A,Brake Drum,160,12,Sand Inclusion,B
+2026-09-11,Foundry,Moulding-B,Brake Drum,107,7,Shrinkage,C
+2026-09-11,Machine Shop,CNC-01,Pump Casing,207,8,Undersize,B
+2026-09-11,Machine Shop,CNC-02,Hub Housing,178,4,Tool Mark,C
+2026-09-11,Machine Shop,VMC-01,Gear Blank,211,9,Surface Finish,A
+2026-09-11,Machine Shop,Lathe-01,Hub Housing,148,6,Surface Finish,A
+2026-09-12,Foundry,Furnace-1,Hub Housing,97,8,Blow Hole,B
+2026-09-12,Foundry,Furnace-2,Pump Casing,112,7,Blow Hole,B
+2026-09-12,Foundry,Moulding-A,Hub Housing,200,15,Shrinkage,B
+2026-09-12,Foundry,Moulding-B,Hub Housing,133,4,Shrinkage,B
+2026-09-12,Machine Shop,CNC-01,Brake Drum,196,4,Oversize,A
+2026-09-12,Machine Shop,CNC-02,Brake Drum,178,5,Oversize,B
+2026-09-12,Machine Shop,VMC-01,Brake Drum,129,7,Surface Finish,B
+2026-09-12,Machine Shop,Lathe-01,Hub Housing,90,3,Surface Finish,B
+2026-09-13,Foundry,Furnace-1,Brake Drum,135,10,Blow Hole,C
+2026-09-13,Foundry,Furnace-2,Hub Housing,192,2,Cold Shut,C
+2026-09-13,Foundry,Moulding-A,Pump Casing,142,11,Cold Shut,A
+2026-09-13,Foundry,Moulding-B,Brake Drum,148,5,Sand Inclusion,B
+2026-09-13,Machine Shop,CNC-01,Gear Blank,185,4,Oversize,A
+2026-09-13,Machine Shop,CNC-02,Gear Blank,140,4,Undersize,C
+2026-09-13,Machine Shop,VMC-01,Gear Blank,216,2,Undersize,C
+2026-09-13,Machine Shop,Lathe-01,Hub Housing,81,1,Oversize,A
+2026-09-14,Foundry,Furnace-1,Pump Casing,112,6,Cold Shut,B
+2026-09-14,Foundry,Furnace-2,Pump Casing,189,10,Shrinkage,C
+2026-09-14,Foundry,Moulding-A,Flywheel,186,13,Sand Inclusion,C
+2026-09-14,Foundry,Moulding-B,Pump Casing,141,7,Blow Hole,C
+2026-09-14,Machine Shop,CNC-01,Hub Housing,105,4,Oversize,C
+2026-09-14,Machine Shop,CNC-02,Gear Blank,161,5,Oversize,C
+2026-09-14,Machine Shop,VMC-01,Pump Casing,124,2,Undersize,C
+2026-09-14,Machine Shop,Lathe-01,Hub Housing,177,7,Surface Finish,A
+2026-09-15,Foundry,Furnace-1,Pump Casing,100,7,Blow Hole,C
+2026-09-15,Foundry,Furnace-2,Flywheel,164,4,Blow Hole,C
+2026-09-15,Foundry,Moulding-A,Brake Drum,164,13,Cold Shut,C
+2026-09-15,Foundry,Moulding-B,Brake Drum,154,3,Shrinkage,B
+2026-09-15,Machine Shop,CNC-01,Hub Housing,149,2,Tool Mark,C
+2026-09-15,Machine Shop,CNC-02,Brake Drum,101,3,Undersize,B
+2026-09-15,Machine Shop,VMC-01,Pump Casing,146,2,Undersize,C
+2026-09-15,Machine Shop,Lathe-01,Hub Housing,162,7,Tool Mark,C
+2026-09-16,Foundry,Furnace-1,Brake Drum,141,4,Cold Shut,C
+2026-09-16,Foundry,Furnace-2,Flywheel,115,9,Blow Hole,B
+2026-09-16,Foundry,Moulding-A,Brake Drum,147,9,Shrinkage,A
+2026-09-16,Foundry,Moulding-B,Pump Casing,148,3,Blow Hole,A
+2026-09-16,Machine Shop,CNC-01,Hub Housing,215,4,Oversize,C
+2026-09-16,Machine Shop,CNC-02,Brake Drum,165,4,Undersize,B
+2026-09-16,Machine Shop,VMC-01,Pump Casing,182,2,Undersize,A
+2026-09-16,Machine Shop,Lathe-01,Hub Housing,192,4,Tool Mark,A
+2026-09-17,Foundry,Furnace-1,Hub Housing,139,5,Cold Shut,A
+2026-09-17,Foundry,Furnace-2,Flywheel,155,5,Cold Shut,A
+2026-09-17,Foundry,Moulding-A,Pump Casing,149,3,Shrinkage,C
+2026-09-17,Foundry,Moulding-B,Hub Housing,122,10,Sand Inclusion,C
+2026-09-17,Machine Shop,CNC-01,Brake Drum,138,4,Surface Finish,C
+2026-09-17,Machine Shop,CNC-02,Brake Drum,128,5,Tool Mark,A
+2026-09-17,Machine Shop,VMC-01,Brake Drum,102,1,Tool Mark,C
+2026-09-17,Machine Shop,Lathe-01,Brake Drum,194,11,Undersize,C
+2026-09-18,Foundry,Furnace-1,Brake Drum,134,7,Cold Shut,C
+2026-09-18,Foundry,Furnace-2,Brake Drum,148,6,Sand Inclusion,C
+2026-09-18,Foundry,Moulding-A,Pump Casing,140,9,Sand Inclusion,B
+2026-09-18,Foundry,Moulding-B,Flywheel,164,12,Blow Hole,B
+2026-09-18,Machine Shop,CNC-01,Hub Housing,173,9,Tool Mark,A
+2026-09-18,Machine Shop,CNC-02,Gear Blank,148,4,Undersize,A
+2026-09-18,Machine Shop,VMC-01,Gear Blank,149,4,Tool Mark,B
+2026-09-18,Machine Shop,Lathe-01,Gear Blank,172,4,Undersize,A
+2026-09-19,Foundry,Furnace-1,Flywheel,91,4,Shrinkage,A
+2026-09-19,Foundry,Furnace-2,Hub Housing,97,2,Shrinkage,A
+2026-09-19,Foundry,Moulding-A,Brake Drum,196,10,Cold Shut,B
+2026-09-19,Foundry,Moulding-B,Pump Casing,132,3,Cold Shut,B
+2026-09-19,Machine Shop,CNC-01,Brake Drum,150,3,Undersize,B
+2026-09-19,Machine Shop,CNC-02,Gear Blank,176,4,Undersize,A
+2026-09-19,Machine Shop,VMC-01,Pump Casing,189,2,Oversize,C
+2026-09-19,Machine Shop,Lathe-01,Pump Casing,102,2,Tool Mark,B
+2026-09-20,Foundry,Furnace-1,Pump Casing,172,7,Blow Hole,C
+2026-09-20,Foundry,Furnace-2,Pump Casing,211,7,Shrinkage,C
+2026-09-20,Foundry,Moulding-A,Pump Casing,185,4,Sand Inclusion,A
+2026-09-20,Foundry,Moulding-B,Pump Casing,105,9,Blow Hole,A
+2026-09-20,Machine Shop,CNC-01,Brake Drum,181,3,Undersize,A
+2026-09-20,Machine Shop,CNC-02,Gear Blank,163,6,Undersize,A
+2026-09-20,Machine Shop,VMC-01,Gear Blank,147,1,Tool Mark,C
+2026-09-20,Machine Shop,Lathe-01,Pump Casing,203,9,Surface Finish,A
+2026-09-21,Foundry,Furnace-1,Hub Housing,162,1,Shrinkage,B
+2026-09-21,Foundry,Furnace-2,Brake Drum,180,2,Sand Inclusion,C
+2026-09-21,Foundry,Moulding-A,Brake Drum,197,3,Shrinkage,B
+2026-09-21,Foundry,Moulding-B,Brake Drum,111,4,Cold Shut,C
+2026-09-21,Machine Shop,CNC-01,Brake Drum,162,1,Surface Finish,B
+2026-09-21,Machine Shop,CNC-02,Brake Drum,134,7,Tool Mark,A
+2026-09-21,Machine Shop,VMC-01,Pump Casing,209,5,Oversize,B
+2026-09-21,Machine Shop,Lathe-01,Brake Drum,197,2,Oversize,A
+2026-09-22,Foundry,Furnace-1,Brake Drum,174,3,Sand Inclusion,A
+2026-09-22,Foundry,Furnace-2,Brake Drum,180,6,Cold Shut,B
+2026-09-22,Foundry,Moulding-A,Hub Housing,105,7,Blow Hole,B
+2026-09-22,Foundry,Moulding-B,Pump Casing,96,5,Sand Inclusion,A
+2026-09-22,Machine Shop,CNC-01,Brake Drum,217,8,Undersize,C
+2026-09-22,Machine Shop,CNC-02,Gear Blank,184,7,Tool Mark,B
+2026-09-22,Machine Shop,VMC-01,Pump Casing,108,5,Oversize,A
+2026-09-22,Machine Shop,Lathe-01,Brake Drum,99,4,Oversize,C
+2026-09-23,Foundry,Furnace-1,Flywheel,214,9,Cold Shut,B
+2026-09-23,Foundry,Furnace-2,Brake Drum,176,13,Blow Hole,A
+2026-09-23,Foundry,Moulding-A,Flywheel,197,15,Blow Hole,C
+2026-09-23,Foundry,Moulding-B,Hub Housing,207,10,Shrinkage,B
+2026-09-23,Machine Shop,CNC-01,Brake Drum,180,3,Undersize,A
+2026-09-23,Machine Shop,CNC-02,Pump Casing,177,9,Surface Finish,C
+2026-09-23,Machine Shop,VMC-01,Gear Blank,218,5,Undersize,C
+2026-09-23,Machine Shop,Lathe-01,Gear Blank,141,2,Surface Finish,A
+2026-09-24,Foundry,Furnace-1,Brake Drum,135,7,Cold Shut,C
+2026-09-24,Foundry,Furnace-2,Brake Drum,171,8,Sand Inclusion,B
+2026-09-24,Foundry,Moulding-A,Hub Housing,209,17,Cold Shut,A
+2026-09-24,Foundry,Moulding-B,Brake Drum,170,7,Blow Hole,C
+2026-09-24,Machine Shop,CNC-01,Gear Blank,205,9,Surface Finish,C
+2026-09-24,Machine Shop,CNC-02,Pump Casing,96,4,Oversize,B
+2026-09-24,Machine Shop,VMC-01,Brake Drum,140,2,Surface Finish,A
+2026-09-24,Machine Shop,Lathe-01,Hub Housing,148,5,Tool Mark,A
+2026-09-25,Foundry,Furnace-1,Brake Drum,134,8,Shrinkage,A
+2026-09-25,Foundry,Furnace-2,Brake Drum,154,1,Shrinkage,C
+2026-09-25,Foundry,Moulding-A,Pump Casing,182,9,Shrinkage,C
+2026-09-25,Foundry,Moulding-B,Hub Housing,199,4,Sand Inclusion,B
+2026-09-25,Machine Shop,CNC-01,Gear Blank,114,3,Tool Mark,C
+2026-09-25,Machine Shop,CNC-02,Hub Housing,172,4,Tool Mark,B
+2026-09-25,Machine Shop,VMC-01,Gear Blank,161,7,Undersize,B
+2026-09-25,Machine Shop,Lathe-01,Hub Housing,158,8,Surface Finish,B
+2026-09-26,Foundry,Furnace-1,Brake Drum,117,6,Cold Shut,B
+2026-09-26,Foundry,Furnace-2,Hub Housing,211,3,Shrinkage,B
+2026-09-26,Foundry,Moulding-A,Hub Housing,139,2,Sand Inclusion,B
+2026-09-26,Foundry,Moulding-B,Pump Casing,88,7,Cold Shut,A
+2026-09-26,Machine Shop,CNC-01,Gear Blank,170,3,Tool Mark,A
+2026-09-26,Machine Shop,CNC-02,Gear Blank,140,7,Oversize,A
+2026-09-26,Machine Shop,VMC-01,Gear Blank,89,3,Surface Finish,B
+2026-09-26,Machine Shop,Lathe-01,Brake Drum,86,2,Surface Finish,B
+2026-09-27,Foundry,Furnace-1,Brake Drum,128,9,Blow Hole,C
+2026-09-27,Foundry,Furnace-2,Flywheel,182,2,Blow Hole,A
+2026-09-27,Foundry,Moulding-A,Hub Housing,184,4,Blow Hole,C
+2026-09-27,Foundry,Moulding-B,Pump Casing,115,5,Shrinkage,C
+2026-09-27,Machine Shop,CNC-01,Brake Drum,214,5,Surface Finish,C
+2026-09-27,Machine Shop,CNC-02,Hub Housing,211,11,Undersize,C
+2026-09-27,Machine Shop,VMC-01,Brake Drum,140,3,Surface Finish,B
+2026-09-27,Machine Shop,Lathe-01,Gear Blank,145,5,Undersize,A
+2026-09-28,Foundry,Furnace-1,Flywheel,165,2,Sand Inclusion,C
+2026-09-28,Foundry,Furnace-2,Brake Drum,81,0,None,C
+2026-09-28,Foundry,Moulding-A,Pump Casing,122,10,Sand Inclusion,A
+2026-09-28,Foundry,Moulding-B,Pump Casing,102,2,Cold Shut,A
+2026-09-28,Machine Shop,CNC-01,Pump Casing,146,5,Oversize,A
+2026-09-28,Machine Shop,CNC-02,Pump Casing,95,4,Surface Finish,C
+2026-09-28,Machine Shop,VMC-01,Hub Housing,158,2,Oversize,B
+2026-09-28,Machine Shop,Lathe-01,Brake Drum,168,5,Tool Mark,C
+2026-09-29,Foundry,Furnace-1,Hub Housing,134,6,Sand Inclusion,A
+2026-09-29,Foundry,Furnace-2,Pump Casing,158,11,Sand Inclusion,C
+2026-09-29,Foundry,Moulding-A,Flywheel,115,10,Sand Inclusion,C
+2026-09-29,Foundry,Moulding-B,Flywheel,139,6,Cold Shut,C
+2026-09-29,Machine Shop,CNC-01,Pump Casing,104,4,Surface Finish,C
+2026-09-29,Machine Shop,CNC-02,Gear Blank,152,8,Surface Finish,B
+2026-09-29,Machine Shop,VMC-01,Brake Drum,145,3,Tool Mark,C
+2026-09-29,Machine Shop,Lathe-01,Gear Blank,124,5,Tool Mark,B
+2026-09-30,Foundry,Furnace-1,Pump Casing,210,18,Blow Hole,A
+2026-09-30,Foundry,Furnace-2,Brake Drum,219,12,Shrinkage,A
+2026-09-30,Foundry,Moulding-A,Flywheel,149,2,Blow Hole,B
+2026-09-30,Foundry,Moulding-B,Flywheel,105,4,Sand Inclusion,A
+2026-09-30,Machine Shop,CNC-01,Gear Blank,164,8,Surface Finish,C
+2026-09-30,Machine Shop,CNC-02,Gear Blank,126,4,Undersize,A
+2026-09-30,Machine Shop,VMC-01,Gear Blank,132,7,Undersize,A
+2026-09-30,Machine Shop,Lathe-01,Hub Housing,201,8,Undersize,A
+2026-10-01,Foundry,Furnace-1,Hub Housing,188,6,Shrinkage,C
+2026-10-01,Foundry,Furnace-2,Flywheel,91,1,Shrinkage,C
+2026-10-01,Foundry,Moulding-A,Pump Casing,142,3,Cold Shut,B
+2026-10-01,Foundry,Moulding-B,Brake Drum,121,6,Sand Inclusion,C
+2026-10-01,Machine Shop,CNC-01,Brake Drum,199,2,Tool Mark,B
+2026-10-01,Machine Shop,CNC-02,Brake Drum,217,7,Oversize,C
+2026-10-01,Machine Shop,VMC-01,Gear Blank,93,4,Undersize,B
+2026-10-01,Machine Shop,Lathe-01,Pump Casing,204,10,Oversize,C
+2026-10-02,Foundry,Furnace-1,Hub Housing,88,5,Cold Shut,A
+2026-10-02,Foundry,Furnace-2,Hub Housing,117,4,Sand Inclusion,B
+2026-10-02,Foundry,Moulding-A,Hub Housing,167,14,Cold Shut,A
+2026-10-02,Foundry,Moulding-B,Hub Housing,107,4,Cold Shut,C
+2026-10-02,Machine Shop,CNC-01,Hub Housing,156,5,Tool Mark,C
+2026-10-02,Machine Shop,CNC-02,Brake Drum,171,4,Surface Finish,A
+2026-10-02,Machine Shop,VMC-01,Brake Drum,144,7,Tool Mark,B
+2026-10-02,Machine Shop,Lathe-01,Pump Casing,87,2,Undersize,B
+2026-10-03,Foundry,Furnace-1,Pump Casing,161,9,Blow Hole,C
+2026-10-03,Foundry,Furnace-2,Pump Casing,127,5,Shrinkage,B
+2026-10-03,Foundry,Moulding-A,Flywheel,204,13,Cold Shut,B
+2026-10-03,Foundry,Moulding-B,Pump Casing,194,9,Blow Hole,C
+2026-10-03,Machine Shop,CNC-01,Pump Casing,119,1,Undersize,C
+2026-10-03,Machine Shop,CNC-02,Gear Blank,121,6,Oversize,B
+2026-10-03,Machine Shop,VMC-01,Pump Casing,151,2,Undersize,C
+2026-10-03,Machine Shop,Lathe-01,Hub Housing,89,5,Tool Mark,C
+2026-10-04,Foundry,Furnace-1,Hub Housing,122,2,Shrinkage,C
+2026-10-04,Foundry,Furnace-2,Pump Casing,147,2,Shrinkage,B
+2026-10-04,Foundry,Moulding-A,Flywheel,114,4,Blow Hole,B
+2026-10-04,Foundry,Moulding-B,Pump Casing,208,15,Blow Hole,A
+2026-10-04,Machine Shop,CNC-01,Pump Casing,146,5,Tool Mark,C
+2026-10-04,Machine Shop,CNC-02,Gear Blank,92,3,Undersize,C
+2026-10-04,Machine Shop,VMC-01,Brake Drum,135,3,Tool Mark,B
+2026-10-04,Machine Shop,Lathe-01,Pump Casing,124,6,Oversize,A
+2026-10-05,Foundry,Furnace-1,Brake Drum,108,1,Blow Hole,C
+2026-10-05,Foundry,Furnace-2,Brake Drum,121,9,Shrinkage,C
+2026-10-05,Foundry,Moulding-A,Flywheel,211,6,Sand Inclusion,A
+2026-10-05,Foundry,Moulding-B,Hub Housing,134,11,Shrinkage,C
+2026-10-05,Machine Shop,CNC-01,Pump Casing,88,3,Surface Finish,C
+2026-10-05,Machine Shop,CNC-02,Pump Casing,215,9,Surface Finish,C
+2026-10-05,Machine Shop,VMC-01,Gear Blank,197,5,Tool Mark,A
+2026-10-05,Machine Shop,Lathe-01,Hub Housing,181,3,Surface Finish,B
+2026-10-06,Foundry,Furnace-1,Flywheel,219,11,Blow Hole,B
+2026-10-06,Foundry,Furnace-2,Flywheel,212,6,Shrinkage,C
+2026-10-06,Foundry,Moulding-A,Flywheel,207,8,Cold Shut,A
+2026-10-06,Foundry,Moulding-B,Flywheel,97,8,Shrinkage,A
+2026-10-06,Machine Shop,CNC-01,Hub Housing,81,4,Oversize,B
+2026-10-06,Machine Shop,CNC-02,Hub Housing,174,8,Oversize,A
+2026-10-06,Machine Shop,VMC-01,Gear Blank,92,3,Undersize,A
+2026-10-06,Machine Shop,Lathe-01,Brake Drum,150,7,Tool Mark,B
+2026-10-07,Foundry,Furnace-1,Flywheel,166,2,Sand Inclusion,A
+2026-10-07,Foundry,Furnace-2,Brake Drum,205,4,Cold Shut,B
+2026-10-07,Foundry,Moulding-A,Pump Casing,87,7,Cold Shut,A
+2026-10-07,Foundry,Moulding-B,Pump Casing,137,7,Sand Inclusion,C
+2026-10-07,Machine Shop,CNC-01,Brake Drum,211,9,Tool Mark,B
+2026-10-07,Machine Shop,CNC-02,Gear Blank,90,4,Tool Mark,C
+2026-10-07,Machine Shop,VMC-01,Hub Housing,82,3,Oversize,A
+2026-10-07,Machine Shop,Lathe-01,Hub Housing,144,5,Surface Finish,B
+2026-10-08,Foundry,Furnace-1,Hub Housing,218,14,Sand Inclusion,B
+2026-10-08,Foundry,Furnace-2,Pump Casing,180,8,Sand Inclusion,B
+2026-10-08,Foundry,Moulding-A,Flywheel,131,6,Cold Shut,A
+2026-10-08,Foundry,Moulding-B,Hub Housing,113,2,Shrinkage,B
+2026-10-08,Machine Shop,CNC-01,Pump Casing,121,6,Undersize,C
+2026-10-08,Machine Shop,CNC-02,Brake Drum,128,5,Oversize,C
+2026-10-08,Machine Shop,VMC-01,Gear Blank,130,4,Surface Finish,B
+2026-10-08,Machine Shop,Lathe-01,Pump Casing,171,9,Tool Mark,A
+2026-10-09,Foundry,Furnace-1,Brake Drum,215,13,Shrinkage,C
+2026-10-09,Foundry,Furnace-2,Brake Drum,168,13,Sand Inclusion,A
+2026-10-09,Foundry,Moulding-A,Flywheel,179,5,Shrinkage,B
+2026-10-09,Foundry,Moulding-B,Hub Housing,175,4,Sand Inclusion,A
+2026-10-09,Machine Shop,CNC-01,Gear Blank,190,9,Undersize,B
+2026-10-09,Machine Shop,CNC-02,Brake Drum,125,5,Surface Finish,A
+2026-10-09,Machine Shop,VMC-01,Hub Housing,172,6,Oversize,B
+2026-10-09,Machine Shop,Lathe-01,Brake Drum,142,3,Tool Mark,C
+2026-10-10,Foundry,Furnace-1,Brake Drum,144,10,Shrinkage,B
+2026-10-10,Foundry,Furnace-2,Brake Drum,92,4,Sand Inclusion,B
+2026-10-10,Foundry,Moulding-A,Brake Drum,209,16,Blow Hole,A
+2026-10-10,Foundry,Moulding-B,Brake Drum,188,5,Sand Inclusion,C
+2026-10-10,Machine Shop,CNC-01,Hub Housing,133,3,Undersize,B
+2026-10-10,Machine Shop,CNC-02,Hub Housing,154,6,Oversize,B
+2026-10-10,Machine Shop,VMC-01,Hub Housing,174,5,Oversize,C
+2026-10-10,Machine Shop,Lathe-01,Hub Housing,128,5,Oversize,B
+2026-10-11,Foundry,Furnace-1,Hub Housing,158,1,Blow Hole,B
+2026-10-11,Foundry,Furnace-2,Flywheel,110,4,Shrinkage,A
+2026-10-11,Foundry,Moulding-A,Flywheel,171,13,Sand Inclusion,B
+2026-10-11,Foundry,Moulding-B,Brake Drum,94,5,Sand Inclusion,A
+2026-10-11,Machine Shop,CNC-01,Hub Housing,204,3,Oversize,B
+2026-10-11,Machine Shop,CNC-02,Hub Housing,149,2,Oversize,A
+2026-10-11,Machine Shop,VMC-01,Gear Blank,118,5,Undersize,C
+2026-10-11,Machine Shop,Lathe-01,Hub Housing,130,6,Surface Finish,A
+2026-10-12,Foundry,Furnace-1,Hub Housing,161,7,Shrinkage,A
+2026-10-12,Foundry,Furnace-2,Hub Housing,195,13,Cold Shut,A
+2026-10-12,Foundry,Moulding-A,Flywheel,120,9,Blow Hole,C
+2026-10-12,Foundry,Moulding-B,Brake Drum,165,13,Sand Inclusion,C
+2026-10-12,Machine Shop,CNC-01,Gear Blank,183,7,Oversize,A
+2026-10-12,Machine Shop,CNC-02,Pump Casing,131,5,Oversize,C
+2026-10-12,Machine Shop,VMC-01,Gear Blank,122,3,Tool Mark,A
+2026-10-12,Machine Shop,Lathe-01,Brake Drum,177,5,Tool Mark,C
+2026-10-13,Foundry,Furnace-1,Brake Drum,112,7,Shrinkage,C
+2026-10-13,Foundry,Furnace-2,Brake Drum,145,3,Blow Hole,B
+2026-10-13,Foundry,Moulding-A,Pump Casing,184,4,Sand Inclusion,A
+2026-10-13,Foundry,Moulding-B,Brake Drum,144,4,Blow Hole,C
+2026-10-13,Machine Shop,CNC-01,Pump Casing,194,11,Tool Mark,C
+2026-10-13,Machine Shop,CNC-02,Brake Drum,170,3,Tool Mark,C
+2026-10-13,Machine Shop,VMC-01,Gear Blank,181,8,Undersize,C
+2026-10-13,Machine Shop,Lathe-01,Pump Casing,196,4,Surface Finish,C
+2026-10-14,Foundry,Furnace-1,Hub Housing,152,5,Blow Hole,A
+2026-10-14,Foundry,Furnace-2,Flywheel,101,4,Cold Shut,B
+2026-10-14,Foundry,Moulding-A,Flywheel,139,10,Shrinkage,C
+2026-10-14,Foundry,Moulding-B,Hub Housing,175,15,Shrinkage,A
+2026-10-14,Machine Shop,CNC-01,Brake Drum,151,2,Oversize,B
+2026-10-14,Machine Shop,CNC-02,Brake Drum,213,3,Tool Mark,C
+2026-10-14,Machine Shop,VMC-01,Pump Casing,201,7,Surface Finish,C
+2026-10-14,Machine Shop,Lathe-01,Pump Casing,141,3,Undersize,B
+2026-10-15,Foundry,Furnace-1,Pump Casing,107,3,Blow Hole,A
+2026-10-15,Foundry,Furnace-2,Hub Housing,218,8,Shrinkage,A
+2026-10-15,Foundry,Moulding-A,Flywheel,211,4,Blow Hole,C
+2026-10-15,Foundry,Moulding-B,Flywheel,199,12,Cold Shut,B
+2026-10-15,Machine Shop,CNC-01,Gear Blank,107,1,Tool Mark,A
+2026-10-15,Machine Shop,CNC-02,Pump Casing,128,3,Oversize,C
+2026-10-15,Machine Shop,VMC-01,Pump Casing,155,9,Oversize,C
+2026-10-15,Machine Shop,Lathe-01,Hub Housing,100,3,Tool Mark,A
+2026-10-16,Foundry,Furnace-1,Pump Casing,85,7,Cold Shut,B
+2026-10-16,Foundry,Furnace-2,Pump Casing,106,1,Sand Inclusion,B
+2026-10-16,Foundry,Moulding-A,Hub Housing,144,1,Blow Hole,C
+2026-10-16,Foundry,Moulding-B,Pump Casing,115,8,Sand Inclusion,B
+2026-10-16,Machine Shop,CNC-01,Gear Blank,154,5,Oversize,C
+2026-10-16,Machine Shop,CNC-02,Brake Drum,218,10,Undersize,A
+2026-10-16,Machine Shop,VMC-01,Hub Housing,149,3,Oversize,A
+2026-10-16,Machine Shop,Lathe-01,Hub Housing,107,2,Undersize,C
+2026-10-17,Foundry,Furnace-1,Pump Casing,184,14,Blow Hole,C
+2026-10-17,Foundry,Furnace-2,Brake Drum,124,5,Sand Inclusion,B
+2026-10-17,Foundry,Moulding-A,Brake Drum,121,5,Blow Hole,C
+2026-10-17,Foundry,Moulding-B,Pump Casing,90,2,Shrinkage,B
+2026-10-17,Machine Shop,CNC-01,Pump Casing,174,7,Undersize,C
+2026-10-17,Machine Shop,CNC-02,Gear Blank,94,1,Undersize,A
+2026-10-17,Machine Shop,VMC-01,Gear Blank,119,5,Tool Mark,C
+2026-10-17,Machine Shop,Lathe-01,Brake Drum,175,2,Oversize,A
+2026-10-18,Foundry,Furnace-1,Brake Drum,192,16,Shrinkage,B
+2026-10-18,Foundry,Furnace-2,Hub Housing,128,4,Cold Shut,B
+2026-10-18,Foundry,Moulding-A,Hub Housing,200,7,Cold Shut,A
+2026-10-18,Foundry,Moulding-B,Flywheel,80,1,Sand Inclusion,C
+2026-10-18,Machine Shop,CNC-01,Gear Blank,167,9,Tool Mark,A
+2026-10-18,Machine Shop,CNC-02,Pump Casing,131,6,Surface Finish,B
+2026-10-18,Machine Shop,VMC-01,Pump Casing,89,2,Oversize,B
+2026-10-18,Machine Shop,Lathe-01,Hub Housing,176,5,Oversize,A
+2026-10-19,Foundry,Furnace-1,Flywheel,215,10,Blow Hole,C
+2026-10-19,Foundry,Furnace-2,Pump Casing,154,2,Cold Shut,A
+2026-10-19,Foundry,Moulding-A,Pump Casing,88,2,Sand Inclusion,A
+2026-10-19,Foundry,Moulding-B,Hub Housing,138,4,Shrinkage,B
+2026-10-19,Machine Shop,CNC-01,Pump Casing,194,2,Oversize,A
+2026-10-19,Machine Shop,CNC-02,Pump Casing,193,7,Undersize,B
+2026-10-19,Machine Shop,VMC-01,Gear Blank,117,4,Tool Mark,A
+2026-10-19,Machine Shop,Lathe-01,Gear Blank,200,10,Surface Finish,A
+2026-10-20,Foundry,Furnace-1,Flywheel,83,6,Cold Shut,A
+2026-10-20,Foundry,Furnace-2,Flywheel,171,13,Cold Shut,C
+2026-10-20,Foundry,Moulding-A,Pump Casing,200,9,Cold Shut,C
+2026-10-20,Foundry,Moulding-B,Brake Drum,144,4,Sand Inclusion,B
+2026-10-20,Machine Shop,CNC-01,Pump Casing,126,6,Surface Finish,C
+2026-10-20,Machine Shop,CNC-02,Hub Housing,99,1,Surface Finish,B
+2026-10-20,Machine Shop,VMC-01,Pump Casing,144,8,Surface Finish,C
+2026-10-20,Machine Shop,Lathe-01,Brake Drum,215,9,Oversize,C
+2026-10-21,Foundry,Furnace-1,Flywheel,117,4,Blow Hole,A
+2026-10-21,Foundry,Furnace-2,Hub Housing,196,6,Blow Hole,A
+2026-10-21,Foundry,Moulding-A,Hub Housing,124,4,Sand Inclusion,C
+2026-10-21,Foundry,Moulding-B,Brake Drum,80,2,Blow Hole,C
+2026-10-21,Machine Shop,CNC-01,Brake Drum,199,8,Undersize,B
+2026-10-21,Machine Shop,CNC-02,Pump Casing,111,5,Surface Finish,C
+2026-10-21,Machine Shop,VMC-01,Pump Casing,151,2,Surface Finish,A
+2026-10-21,Machine Shop,Lathe-01,Pump Casing,133,3,Surface Finish,A
+2026-10-22,Foundry,Furnace-1,Flywheel,136,6,Blow Hole,A
+2026-10-22,Foundry,Furnace-2,Hub Housing,133,4,Sand Inclusion,B
+2026-10-22,Foundry,Moulding-A,Brake Drum,166,8,Sand Inclusion,A
+2026-10-22,Foundry,Moulding-B,Brake Drum,191,9,Shrinkage,B
+2026-10-22,Machine Shop,CNC-01,Brake Drum,179,8,Undersize,C
+2026-10-22,Machine Shop,CNC-02,Gear Blank,193,8,Tool Mark,C
+2026-10-22,Machine Shop,VMC-01,Gear Blank,101,4,Undersize,A
+2026-10-22,Machine Shop,Lathe-01,Pump Casing,116,1,Undersize,B
+2026-10-23,Foundry,Furnace-1,Pump Casing,82,5,Shrinkage,C
+2026-10-23,Foundry,Furnace-2,Flywheel,188,3,Blow Hole,B
+2026-10-23,Foundry,Moulding-A,Brake Drum,197,2,Cold Shut,A
+2026-10-23,Foundry,Moulding-B,Flywheel,117,5,Shrinkage,A
+2026-10-23,Machine Shop,CNC-01,Brake Drum,155,4,Undersize,B
+2026-10-23,Machine Shop,CNC-02,Gear Blank,154,6,Tool Mark,A
+2026-10-23,Machine Shop,VMC-01,Pump Casing,178,8,Undersize,C
+2026-10-23,Machine Shop,Lathe-01,Hub Housing,89,5,Surface Finish,B
+2026-10-24,Foundry,Furnace-1,Flywheel,118,5,Sand Inclusion,B
+2026-10-24,Foundry,Furnace-2,Hub Housing,152,4,Blow Hole,A
+2026-10-24,Foundry,Moulding-A,Pump Casing,130,9,Sand Inclusion,B
+2026-10-24,Foundry,Moulding-B,Pump Casing,85,3,Shrinkage,A
+2026-10-24,Machine Shop,CNC-01,Pump Casing,81,4,Surface Finish,A
+2026-10-24,Machine Shop,CNC-02,Hub Housing,155,4,Undersize,A
+2026-10-24,Machine Shop,VMC-01,Gear Blank,206,11,Tool Mark,A
+2026-10-24,Machine Shop,Lathe-01,Brake Drum,138,3,Surface Finish,A
+2026-10-25,Foundry,Furnace-1,Flywheel,172,12,Shrinkage,C
+2026-10-25,Foundry,Furnace-2,Pump Casing,174,1,Sand Inclusion,A
+2026-10-25,Foundry,Moulding-A,Brake Drum,152,10,Shrinkage,B
+2026-10-25,Foundry,Moulding-B,Pump Casing,142,10,Blow Hole,A
+2026-10-25,Machine Shop,CNC-01,Gear Blank,117,2,Tool Mark,C
+2026-10-25,Machine Shop,CNC-02,Gear Blank,111,1,Undersize,B
+2026-10-25,Machine Shop,VMC-01,Brake Drum,170,3,Surface Finish,C
+2026-10-25,Machine Shop,Lathe-01,Gear Blank,107,4,Tool Mark,A
+2026-10-26,Foundry,Furnace-1,Hub Housing,203,5,Blow Hole,C
+2026-10-26,Foundry,Furnace-2,Brake Drum,197,5,Blow Hole,A
+2026-10-26,Foundry,Moulding-A,Hub Housing,162,8,Sand Inclusion,B
+2026-10-26,Foundry,Moulding-B,Brake Drum,189,8,Blow Hole,B
+2026-10-26,Machine Shop,CNC-01,Hub Housing,148,4,Oversize,B
+2026-10-26,Machine Shop,CNC-02,Pump Casing,102,2,Tool Mark,A
+2026-10-26,Machine Shop,VMC-01,Gear Blank,114,5,Oversize,A
+2026-10-26,Machine Shop,Lathe-01,Pump Casing,108,3,Surface Finish,A
+2026-10-27,Foundry,Furnace-1,Hub Housing,113,4,Cold Shut,B
+2026-10-27,Foundry,Furnace-2,Flywheel,174,15,Shrinkage,C
+2026-10-27,Foundry,Moulding-A,Flywheel,140,6,Sand Inclusion,B
+2026-10-27,Foundry,Moulding-B,Hub Housing,113,9,Shrinkage,A
+2026-10-27,Machine Shop,CNC-01,Pump Casing,108,4,Tool Mark,B
+2026-10-27,Machine Shop,CNC-02,Brake Drum,119,6,Tool Mark,B
+2026-10-27,Machine Shop,VMC-01,Gear Blank,163,2,Tool Mark,C
+2026-10-27,Machine Shop,Lathe-01,Pump Casing,94,2,Surface Finish,C
+2026-10-28,Foundry,Furnace-1,Pump Casing,212,17,Cold Shut,C
+2026-10-28,Foundry,Furnace-2,Flywheel,112,1,Cold Shut,B
+2026-10-28,Foundry,Moulding-A,Hub Housing,88,7,Blow Hole,A
+2026-10-28,Foundry,Moulding-B,Hub Housing,125,3,Sand Inclusion,A
+2026-10-28,Machine Shop,CNC-01,Gear Blank,149,2,Oversize,C
+2026-10-28,Machine Shop,CNC-02,Hub Housing,176,5,Undersize,C
+2026-10-28,Machine Shop,VMC-01,Hub Housing,191,5,Oversize,C
+2026-10-28,Machine Shop,Lathe-01,Gear Blank,210,8,Oversize,B
+2026-10-29,Foundry,Furnace-1,Hub Housing,206,17,Cold Shut,B
+2026-10-29,Foundry,Furnace-2,Flywheel,92,7,Blow Hole,B
+2026-10-29,Foundry,Moulding-A,Flywheel,112,6,Sand Inclusion,A
+2026-10-29,Foundry,Moulding-B,Brake Drum,208,7,Blow Hole,A
+2026-10-29,Machine Shop,CNC-01,Pump Casing,86,2,Undersize,C
+2026-10-29,Machine Shop,CNC-02,Brake Drum,110,3,Undersize,C
+2026-10-29,Machine Shop,VMC-01,Brake Drum,80,1,Undersize,C
+2026-10-29,Machine Shop,Lathe-01,Pump Casing,93,5,Oversize,C
+2026-10-30,Foundry,Furnace-1,Brake Drum,100,5,Shrinkage,B
+2026-10-30,Foundry,Furnace-2,Brake Drum,177,6,Sand Inclusion,B
+2026-10-30,Foundry,Moulding-A,Brake Drum,113,3,Shrinkage,A
+2026-10-30,Foundry,Moulding-B,Brake Drum,206,16,Cold Shut,B
+2026-10-30,Machine Shop,CNC-01,Hub Housing,177,6,Oversize,A
+2026-10-30,Machine Shop,CNC-02,Hub Housing,128,7,Oversize,B
+2026-10-30,Machine Shop,VMC-01,Hub Housing,161,9,Surface Finish,A
+2026-10-30,Machine Shop,Lathe-01,Brake Drum,193,3,Oversize,C
+2026-10-31,Foundry,Furnace-1,Flywheel,192,14,Blow Hole,C
+2026-10-31,Foundry,Furnace-2,Pump Casing,179,15,Shrinkage,A
+2026-10-31,Foundry,Moulding-A,Flywheel,153,4,Shrinkage,A
+2026-10-31,Foundry,Moulding-B,Pump Casing,141,9,Blow Hole,C
+2026-10-31,Machine Shop,CNC-01,Gear Blank,82,4,Undersize,A
+2026-10-31,Machine Shop,CNC-02,Pump Casing,120,6,Surface Finish,C
+2026-10-31,Machine Shop,VMC-01,Pump Casing,183,4,Oversize,B
+2026-10-31,Machine Shop,Lathe-01,Gear Blank,196,5,Oversize,C
+2026-11-01,Foundry,Furnace-1,Hub Housing,189,8,Cold Shut,C
+2026-11-01,Foundry,Furnace-2,Brake Drum,133,9,Cold Shut,B
+2026-11-01,Foundry,Moulding-A,Pump Casing,126,6,Blow Hole,B
+2026-11-01,Foundry,Moulding-B,Pump Casing,155,2,Shrinkage,C
+2026-11-01,Machine Shop,CNC-01,Hub Housing,215,2,Oversize,C
+2026-11-01,Machine Shop,CNC-02,Pump Casing,154,2,Tool Mark,C
+2026-11-01,Machine Shop,VMC-01,Brake Drum,140,6,Oversize,C
+2026-11-01,Machine Shop,Lathe-01,Pump Casing,155,1,Tool Mark,C
+2026-11-02,Foundry,Furnace-1,Flywheel,177,14,Blow Hole,A
+2026-11-02,Foundry,Furnace-2,Hub Housing,189,15,Shrinkage,B
+2026-11-02,Foundry,Moulding-A,Hub Housing,137,5,Shrinkage,A
+2026-11-02,Foundry,Moulding-B,Pump Casing,112,4,Shrinkage,A
+2026-11-02,Machine Shop,CNC-01,Hub Housing,187,5,Tool Mark,B
+2026-11-02,Machine Shop,CNC-02,Pump Casing,119,3,Oversize,C
+2026-11-02,Machine Shop,VMC-01,Pump Casing,145,5,Tool Mark,B
+2026-11-02,Machine Shop,Lathe-01,Gear Blank,157,8,Tool Mark,A
+2026-11-03,Foundry,Furnace-1,Brake Drum,152,9,Sand Inclusion,A
+2026-11-03,Foundry,Furnace-2,Hub Housing,214,10,Sand Inclusion,A
+2026-11-03,Foundry,Moulding-A,Hub Housing,186,13,Blow Hole,B
+2026-11-03,Foundry,Moulding-B,Hub Housing,208,3,Cold Shut,B
+2026-11-03,Machine Shop,CNC-01,Brake Drum,184,10,Surface Finish,B
+2026-11-03,Machine Shop,CNC-02,Brake Drum,164,4,Undersize,B
+2026-11-03,Machine Shop,VMC-01,Brake Drum,157,8,Tool Mark,C
+2026-11-03,Machine Shop,Lathe-01,Brake Drum,183,10,Tool Mark,A
+2026-11-04,Foundry,Furnace-1,Brake Drum,187,8,Shrinkage,C
+2026-11-04,Foundry,Furnace-2,Pump Casing,121,5,Sand Inclusion,C
+2026-11-04,Foundry,Moulding-A,Hub Housing,84,2,Shrinkage,B
+2026-11-04,Foundry,Moulding-B,Flywheel,199,6,Cold Shut,C
+2026-11-04,Machine Shop,CNC-01,Brake Drum,114,2,Surface Finish,B
+2026-11-04,Machine Shop,CNC-02,Brake Drum,171,9,Undersize,C
+2026-11-04,Machine Shop,VMC-01,Pump Casing,115,5,Surface Finish,B
+2026-11-04,Machine Shop,Lathe-01,Hub Housing,134,6,Undersize,C
+2026-11-05,Foundry,Furnace-1,Brake Drum,147,12,Blow Hole,A
+2026-11-05,Foundry,Furnace-2,Pump Casing,103,7,Cold Shut,A
+2026-11-05,Foundry,Moulding-A,Pump Casing,161,8,Blow Hole,A
+2026-11-05,Foundry,Moulding-B,Brake Drum,185,12,Sand Inclusion,A
+2026-11-05,Machine Shop,CNC-01,Hub Housing,116,5,Undersize,C
+2026-11-05,Machine Shop,CNC-02,Gear Blank,201,7,Undersize,B
+2026-11-05,Machine Shop,VMC-01,Pump Casing,142,2,Undersize,B
+2026-11-05,Machine Shop,Lathe-01,Hub Housing,112,2,Tool Mark,B
+2026-11-06,Foundry,Furnace-1,Flywheel,88,4,Cold Shut,C
+2026-11-06,Foundry,Furnace-2,Flywheel,171,15,Shrinkage,C
+2026-11-06,Foundry,Moulding-A,Pump Casing,168,13,Cold Shut,B
+2026-11-06,Foundry,Moulding-B,Hub Housing,191,6,Blow Hole,B
+2026-11-06,Machine Shop,CNC-01,Hub Housing,217,8,Tool Mark,B
+2026-11-06,Machine Shop,CNC-02,Hub Housing,190,4,Oversize,C
+2026-11-06,Machine Shop,VMC-01,Gear Blank,82,1,Tool Mark,A
+2026-11-06,Machine Shop,Lathe-01,Brake Drum,116,6,Surface Finish,A
+2026-11-07,Foundry,Furnace-1,Pump Casing,121,6,Cold Shut,C
+2026-11-07,Foundry,Furnace-2,Hub Housing,188,7,Blow Hole,A
+2026-11-07,Foundry,Moulding-A,Hub Housing,199,3,Cold Shut,A
+2026-11-07,Foundry,Moulding-B,Pump Casing,112,5,Shrinkage,C
+2026-11-07,Machine Shop,CNC-01,Hub Housing,182,6,Undersize,B
+2026-11-07,Machine Shop,CNC-02,Hub Housing,177,7,Surface Finish,B
+2026-11-07,Machine Shop,VMC-01,Brake Drum,92,1,Undersize,C
+2026-11-07,Machine Shop,Lathe-01,Hub Housing,168,8,Surface Finish,A
+2026-11-08,Foundry,Furnace-1,Hub Housing,206,8,Blow Hole,C
+2026-11-08,Foundry,Furnace-2,Brake Drum,163,8,Blow Hole,C
+2026-11-08,Foundry,Moulding-A,Brake Drum,167,10,Blow Hole,A
+2026-11-08,Foundry,Moulding-B,Flywheel,164,6,Cold Shut,A
+2026-11-08,Machine Shop,CNC-01,Pump Casing,98,3,Surface Finish,A
+2026-11-08,Machine Shop,CNC-02,Brake Drum,187,3,Undersize,A
+2026-11-08,Machine Shop,VMC-01,Gear Blank,219,5,Surface Finish,B
+2026-11-08,Machine Shop,Lathe-01,Gear Blank,109,2,Tool Mark,B
+2026-11-09,Foundry,Furnace-1,Pump Casing,190,2,Cold Shut,C
+2026-11-09,Foundry,Furnace-2,Hub Housing,218,11,Shrinkage,B
+2026-11-09,Foundry,Moulding-A,Hub Housing,112,2,Cold Shut,A
+2026-11-09,Foundry,Moulding-B,Brake Drum,199,2,Shrinkage,C
+2026-11-09,Machine Shop,CNC-01,Hub Housing,173,1,Oversize,A
+2026-11-09,Machine Shop,CNC-02,Gear Blank,182,7,Oversize,A
+2026-11-09,Machine Shop,VMC-01,Pump Casing,200,4,Oversize,B
+2026-11-09,Machine Shop,Lathe-01,Pump Casing,96,4,Oversize,A
+2026-11-10,Foundry,Furnace-1,Brake Drum,105,7,Blow Hole,B
+2026-11-10,Foundry,Furnace-2,Flywheel,172,11,Blow Hole,B
+2026-11-10,Foundry,Moulding-A,Hub Housing,107,7,Cold Shut,A
+2026-11-10,Foundry,Moulding-B,Hub Housing,117,5,Sand Inclusion,A
+2026-11-10,Machine Shop,CNC-01,Pump Casing,94,4,Tool Mark,C
+2026-11-10,Machine Shop,CNC-02,Pump Casing,131,3,Oversize,A
+2026-11-10,Machine Shop,VMC-01,Pump Casing,153,5,Oversize,C
+2026-11-10,Machine Shop,Lathe-01,Brake Drum,85,4,Oversize,C
+2026-11-11,Foundry,Furnace-1,Hub Housing,128,8,Cold Shut,C
+2026-11-11,Foundry,Furnace-2,Brake Drum,171,5,Cold Shut,B
+2026-11-11,Foundry,Moulding-A,Flywheel,202,3,Sand Inclusion,B
+2026-11-11,Foundry,Moulding-B,Brake Drum,83,6,Sand Inclusion,C
+2026-11-11,Machine Shop,CNC-01,Gear Blank,86,4,Surface Finish,C
+2026-11-11,Machine Shop,CNC-02,Brake Drum,97,3,Undersize,C
+2026-11-11,Machine Shop,VMC-01,Brake Drum,126,4,Surface Finish,C
+2026-11-11,Machine Shop,Lathe-01,Brake Drum,168,5,Tool Mark,A
+2026-11-12,Foundry,Furnace-1,Hub Housing,96,7,Shrinkage,C
+2026-11-12,Foundry,Furnace-2,Hub Housing,196,11,Shrinkage,B
+2026-11-12,Foundry,Moulding-A,Hub Housing,154,10,Blow Hole,A
+2026-11-12,Foundry,Moulding-B,Brake Drum,149,7,Cold Shut,B
+2026-11-12,Machine Shop,CNC-01,Pump Casing,110,1,Oversize,A
+2026-11-12,Machine Shop,CNC-02,Hub Housing,105,5,Surface Finish,C
+2026-11-12,Machine Shop,VMC-01,Pump Casing,184,5,Tool Mark,A
+2026-11-12,Machine Shop,Lathe-01,Gear Blank,145,7,Surface Finish,B
+2026-11-13,Foundry,Furnace-1,Hub Housing,168,6,Blow Hole,A
+2026-11-13,Foundry,Furnace-2,Flywheel,167,8,Blow Hole,B
+2026-11-13,Foundry,Moulding-A,Flywheel,116,7,Blow Hole,A
+2026-11-13,Foundry,Moulding-B,Hub Housing,160,4,Blow Hole,C
+2026-11-13,Machine Shop,CNC-01,Pump Casing,132,4,Tool Mark,C
+2026-11-13,Machine Shop,CNC-02,Hub Housing,180,8,Undersize,B
+2026-11-13,Machine Shop,VMC-01,Brake Drum,197,5,Surface Finish,C
+2026-11-13,Machine Shop,Lathe-01,Gear Blank,205,8,Surface Finish,C
