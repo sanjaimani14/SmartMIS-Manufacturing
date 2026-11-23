@@ -18,6 +18,7 @@ DB_PATH = os.getenv("SMARTMIS_DB_PATH", "smartmis.db")
 PMS_DATABASE_URL = os.getenv("PMS_DATABASE_URL", "sqlite:///pms_external.db")
 MOCK_PMS_URL = os.getenv("MOCK_PMS_URL", "http://127.0.0.1:8001")
 COLUMN_MAPPINGS_FILE = os.getenv("COLUMN_MAPPINGS_FILE", "column_mappings.json")
+COPQ_CONFIG_FILE = os.getenv("COPQ_CONFIG_FILE", "copq_costs.json")
 
 # SMTP Email Dispatch settings
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")

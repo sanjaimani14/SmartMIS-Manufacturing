@@ -39,6 +39,13 @@ from scheduler import (
     run_scheduled_automation, list_archived_reports
 )
 
+# Import and re-export advanced analytics & KPIs
+from kpis import (
+    compute_advanced_kpis, DEFAULT_PART_COSTS, load_copq_costs,
+    save_copq_costs, compute_copq, compute_spc_p_chart,
+    detect_anomalies, forecast_production_and_rejection, drill_down_level
+)
+
 log = logging.getLogger('smartmis')
 
 
