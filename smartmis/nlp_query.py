@@ -21,10 +21,15 @@ try:
     import config
     from data import PRODUCTS, MACHINES, DEFECTS, SHIFTS
     from kpis import compute_advanced_kpis
+    from ui.charts import apply_chart_theme
 except ImportError:
-    from . import config
-    from .data import PRODUCTS, MACHINES, DEFECTS, SHIFTS
-    from .kpis import compute_advanced_kpis
+    try:
+        from . import config
+        from .data import PRODUCTS, MACHINES, DEFECTS, SHIFTS
+        from .kpis import compute_advanced_kpis
+        from .ui.charts import apply_chart_theme
+    except ImportError:
+        apply_chart_theme = lambda f, **kw: f
 
 log = logging.getLogger("smartmis.nlp_query")
 
@@ -98,7 +103,7 @@ def execute_whitelisted_query(
             title=f"Top {n} {dim.title()}s by {metric.replace('_', ' ').title()}",
             color_continuous_scale="Reds" if metric == "rejected" else "Blues"
         )
-        fig.update_layout(margin=dict(t=40, b=10))
+        apply_chart_theme(fig, title=f"Top {n} {dim.title()}s by {metric.replace('_', ' ').title()}")
         exp = f"Identified Top {len(grouped)} {dim}s ranked by total {metric}."
         return grouped, "bar", fig, exp
 
@@ -116,10 +121,10 @@ def execute_whitelisted_query(
 
         target_col = metric if metric in daily.columns else "rejection_%"
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=daily[dim], y=daily[target_col], mode="lines+markers", name=target_col.title(), line=dict(color="#1F3A5F", width=2.5)))
+        fig.add_trace(go.Scatter(x=daily[dim], y=daily[target_col], mode="lines+markers", name=target_col.title(), line=dict(color="#2D7FF9", width=2.5)))
         if target_col == "rejection_%":
-            fig.add_hline(y=config.REJECTION_TARGET, line_dash="dash", line_color="gray", annotation_text=f"Target ({config.REJECTION_TARGET}%)")
-        fig.update_layout(title=f"Trend for {target_col.replace('_', ' ').title()} over {dim.title()}", margin=dict(t=40, b=10))
+            fig.add_hline(y=config.REJECTION_TARGET, line_dash="dash", line_color="#FF4D4F", annotation_text=f"Target ({config.REJECTION_TARGET}%)")
+        apply_chart_theme(fig, title=f"Trend for {target_col.replace('_', ' ').title()} over {dim.title()}")
 
         exp = f"Computed time-series trend of {target_col} across {len(daily)} intervals."
         return daily, "line", fig, exp
@@ -142,8 +147,9 @@ def execute_whitelisted_query(
         grouped = grouped.sort_values(metric if metric in grouped.columns else "rejection_%", ascending=False).reset_index(drop=True)
 
         target_col = metric if metric in grouped.columns else "rejection_%"
-        fig = px.bar(grouped, x=dim, y=target_col, color=dim, title=f"Comparison across {dim.title()} by {target_col}")
+        fig = px.bar(grouped, x=dim, y=target_col, color=dim, title=f"Comparison across {dim.title()} by {target_col}", color_discrete_sequence=["#2D7FF9", "#FF6B1A", "#00C2A8", "#FFB020"])
         fig.update_layout(margin=dict(t=40, b=10), showlegend=False)
+        apply_chart_theme(fig, title=f"Comparison across {dim.title()} by {target_col}")
 
         exp = f"Compared {target_col} performance across {len(grouped)} distinct {dim}s."
         return grouped, "bar", fig, exp

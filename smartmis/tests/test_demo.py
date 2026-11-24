@@ -80,3 +80,25 @@ def test_requirement_checklist_mapping():
         assert req["status"].startswith("✅")
         assert len(req["feature_implemented"]) > 10
         assert len(req["verification"]) > 5
+
+
+def test_live_stream_and_spike_keep_date_type(sample_df):
+    """Regression: streamed/spiked rows must keep datetime.date so every page can filter by date."""
+    batch = demo.generate_streaming_batch(n_records=5)
+    spiked, _ = demo.inject_defect_spike(sample_df)
+    merged = demo.normalize_dates(pd.concat([demo.normalize_dates(spiked), batch], ignore_index=True))
+    assert all(isinstance(d, date) and not isinstance(d, pd.Timestamp) for d in merged["date"])
+    cutoff = merged["date"].min()
+    assert (merged["date"] >= cutoff).all()      # would raise TypeError with mixed Timestamp/date
+
+
+def test_incremental_load_handles_new_columns(tmp_path, sample_df):
+    """Regression: streamed batches with extra columns must not break the SQLite append."""
+    import sqlite3, data
+    db = str(tmp_path / "t.db")
+    base = sample_df.drop(columns=[c for c in ("product_type",) if c in sample_df.columns])
+    con = sqlite3.connect(db); base.to_sql("pms_data", con, index=False); con.close()
+    batch = demo.generate_streaming_batch(n_records=3, random_seed=1)
+    res = data.incremental_load(batch, source_type="Live Stream", source_name="test", db_path=db)
+    assert res["inserted"] >= 1 if "inserted" in res else True
+

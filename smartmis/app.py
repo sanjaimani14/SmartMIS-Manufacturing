@@ -15,6 +15,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import config
 import core
 
+try:
+    from ui.theme import inject_theme, render_hero_header, render_sidebar_brand, render_sidebar_footer
+    from ui.charts import apply_chart_theme
+except ImportError:
+    from smartmis.ui.theme import inject_theme, render_hero_header, render_sidebar_brand, render_sidebar_footer
+    from smartmis.ui.charts import apply_chart_theme
+
 logging.basicConfig(level=logging.INFO)
 st.set_page_config(
     page_title="SmartMIS - Manufacturing BI Platform",
@@ -23,21 +30,8 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Enterprise Styling
-st.markdown("""<style>
-.hdr{background:linear-gradient(90deg,#1F3A5F,#2B4C7E);padding:18px 24px;border-radius:10px;margin-bottom:14px}
-.hdr h1{color:#fff;font-size:26px;margin:0}.hdr p{color:#F4B183;margin:2px 0 0;font-size:14px}
-.card{background:#F2F5FA;border-radius:10px;padding:14px 16px;border-left:6px solid #1F3A5F;margin-bottom:10px}
-.card.green{border-color:#2E9E5B}.card.amber{border-color:#F2A900}.card.red{border-color:#D93025}
-.card .l{color:#555;font-size:13px;font-weight:600}.card .v{font-size:26px;font-weight:700;color:#1F3A5F}.card .d{font-size:12px;color:#555}
-.comm-box{background:#F8FAFC;border:1px solid #CBD5E1;border-left:5px solid #1F3A5F;border-radius:8px;padding:14px 18px;margin-bottom:16px}
-.comm-box h4{color:#1F3A5F;margin:0 0 6px 0;font-size:14px}
-.comm-box p{color:#333;margin:0;font-size:13px;line-height:1.5}
-.insight-card{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:8px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
-.badge-crit{background:#FCE8E6;color:#C5221F;font-weight:bold;padding:2px 7px;border-radius:8px;font-size:10px}
-.badge-warn{background:#FEF7E0;color:#B06000;font-weight:bold;padding:2px 7px;border-radius:8px;font-size:10px}
-.badge-info{background:#E8F0FE;color:#1A73E8;font-weight:bold;padding:2px 7px;border-radius:8px;font-size:10px}
-</style><div class="hdr"><h1>SmartMIS</h1><p>Automated Manufacturing MIS &amp; Advanced BI Analytics Platform | Sakthi Hackathon 2.0</p></div>""", unsafe_allow_html=True)
+# Inject Global Smart Factory Control Room Design System
+inject_theme()
 
 # ---- Central Database Initialization ---------------------------------------
 core.init_central_db()
@@ -55,11 +49,29 @@ if "user" not in st.session_state:
 
 user = st.session_state["user"]
 
-# Sidebar User & Role Switcher
-st.sidebar.markdown(f"**👤 Current User:** `{user['username']}`")
-st.sidebar.caption(f"Role: **{user['role']}** | Scope: **{user['department']}**")
+# ---- Sidebar Header & Brand Block ------------------------------------------
+render_sidebar_brand()
 
-with st.sidebar.expander("🔐 Switch User / Role", expanded=False):
+# Sidebar User Info Badge
+role_color = "#FF6B1A" if user["role"] == "Admin" else ("#2D7FF9" if user["role"] == "Manager" else "#00C2A8")
+st.sidebar.markdown(f"""
+<div style="
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+">
+    <div style="color: #94A3B8; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;">ACTIVE SESSION</div>
+    <div style="color: #FFFFFF; font-weight: 800; font-size: 0.95rem; margin: 2px 0;">{user['full_name']}</div>
+    <div style="display: flex; gap: 6px; align-items: center; margin-top: 3px;">
+        <span style="background: {role_color}; color: #FFFFFF; font-size: 0.7rem; font-weight: 800; padding: 1px 7px; border-radius: 6px; text-transform: uppercase;">{user['role']}</span>
+        <span style="color: #CBD5E1; font-size: 0.78rem;">{user['department']}</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+with st.sidebar.expander("🔐 Switch User Profile", expanded=False):
     demo_role = st.selectbox(
         "Demo User Profiles",
         ["admin (Admin - All)", "manager (Manager - All)", "foundry_op (Operator - Foundry)", "machining_op (Operator - Machine Shop)"]
@@ -155,11 +167,14 @@ if page in ["📊 Executive Dashboard", "📈 Quality Control & SPC", "💰 Cost
 else:
     f = df
 
+# Render Sidebar Team & Hackathon Footer
+render_sidebar_footer()
+
 # ==============================================================================
 # PAGE 1: HOME & OVERVIEW
 # ==============================================================================
 if page == "🏠 Home & Overview":
-    st.subheader("🏭 Automated Manufacturing MIS & Rejection Intelligence Platform")
+    render_hero_header(user, "SmartMIS Control Hub", "Automated Manufacturing MIS & Real-Time Quality Intelligence")
     st.markdown("""
     Welcome to **SmartMIS**, an enterprise manufacturing intelligence platform engineered for **Sakthi Hackathon 2.0 (PS-005)**.
     Designed for foundry and precision machining operations, SmartMIS bridges shop-floor PMS extracts directly with executive BI,
@@ -209,6 +224,7 @@ if page == "🏠 Home & Overview":
 # PAGE 2: EXECUTIVE DASHBOARD
 # ==============================================================================
 elif page == "📊 Executive Dashboard":
+    render_hero_header(user, "Executive Operations Dashboard", "High-Level OEE, Quality Yield, PPM & Root-Cause Smart Insights")
     cur, dl = core.kpi_with_delta(df, sel_dept, prods, d0, d1, shift, mach)
     adv_kpi = core.compute_advanced_kpis(f)
     
@@ -297,7 +313,7 @@ elif page == "📊 Executive Dashboard":
 # PAGE 3: ASK YOUR DATA (NATURAL LANGUAGE QUERY)
 # ==============================================================================
 elif page == "💬 Ask Your Data":
-    st.subheader("💬 Ask Your Data (Natural-Language Intelligence)")
+    render_hero_header(user, "Ask Your Data (AI Analytics Interface)", "Safe Whitelisted Natural-Language Queries with Transparent Analytical Provenance")
     st.caption("Ask operational questions in plain English. Queries map strictly to whitelisted analytics functions—never arbitrary code execution.")
     
     # Suggested prompt chips
@@ -339,7 +355,7 @@ elif page == "💬 Ask Your Data":
 # PAGE 4: QUALITY CONTROL & SPC
 # ==============================================================================
 elif page == "📈 Quality Control & SPC":
-    st.subheader("📈 Statistical Process Control (p-Chart) & Anomaly Alerts")
+    render_hero_header(user, "Statistical Process Control (p-Chart Studio)", "Subgroup Dynamic 3-Sigma Limits, Western Electric Rules & MAD Anomaly Alerts")
     
     spc_df, spc_alarms = core.compute_spc_p_chart(f, group_col="date")
     anom_df, anom_alerts = core.detect_anomalies(f)
@@ -368,7 +384,7 @@ elif page == "📈 Quality Control & SPC":
                     x=ooc_points["date"], y=ooc_points["p_pct"], mode="markers", name="Out-of-Control Alarm",
                     marker=dict(color="#E8420C", size=10, symbol="x-thin", line=dict(width=3, color="#D93025"))
                 ))
-            fig_p.update_layout(title="p-Chart for Non-Conformance Proportion with Dynamic 3-Sigma Limits", yaxis_title="Rejection %", margin=dict(t=40, b=10), legend=dict(orientation="h", y=-.2))
+            apply_chart_theme(fig_p, title="p-Chart for Non-Conformance Proportion with Dynamic 3-Sigma Limits")
             st.plotly_chart(fig_p, use_container_width=True)
             
     st.markdown("---")
@@ -399,7 +415,7 @@ elif page == "📈 Quality Control & SPC":
 # PAGE 5: COST OF POOR QUALITY (COPQ)
 # ==============================================================================
 elif page == "💰 Cost of Poor Quality (COPQ)":
-    st.subheader("💰 Cost of Poor Quality (COPQ) & Financial Scrap Loss")
+    render_hero_header(user, "Cost of Poor Quality (COPQ Analytics)", "Non-Conformance Financial Impact (₹ INR) & Top 5 Capital Loss Drivers")
     
     copq_costs = core.load_copq_costs()
     copq_data = core.compute_copq(f, cost_table=copq_costs)
@@ -456,7 +472,7 @@ elif page == "💰 Cost of Poor Quality (COPQ)":
 # PAGE 6: 14-DAY FORECASTING
 # ==============================================================================
 elif page == "🔮 14-Day Forecasting":
-    st.subheader("🔮 Two-Week Manufacturing Projections (Statsmodels Exponential Smoothing)")
+    render_hero_header(user, "14-Day Predictive Quality & Volume Forecast", "Statsmodels Holt-Winters Exponential Smoothing with 95% Confidence Bounds")
     
     with st.spinner("Generating statistical 14-day forecasts and 95% confidence bounds..."):
         fc_data = core.forecast_production_and_rejection(f, horizon_days=14)
@@ -499,7 +515,7 @@ elif page == "🔮 14-Day Forecasting":
 # PAGE 7: ROOT-CAUSE DRILL-DOWN
 # ==============================================================================
 elif page == "🔍 Root-Cause Drill-Down":
-    st.subheader("🔍 Multi-Level Root-Cause Drill-Down Studio")
+    render_hero_header(user, "Root-Cause Multi-Level Drill-Down", "Hierarchical Decomposition: Department ➔ Machine ➔ Shift ➔ Defect ➔ Heat Lot")
     st.markdown("**Department ➔ Machine ➔ Shift ➔ Defect ➔ Heat Number**")
     
     dd_c1, dd_c2, dd_c3, dd_c4, dd_c5 = st.columns(5)
@@ -553,7 +569,7 @@ elif page == "🔍 Root-Cause Drill-Down":
 # PAGE 8: FORMAL REPORTS (TEMPLATE-DRIVEN)
 # ==============================================================================
 elif page == "📑 Formal Reports":
-    st.subheader("📑 Template-Driven Manufacturing Reports")
+    render_hero_header(user, "Boardroom MIS Report Deliverables", "Approved YAML Template Engine with Corporate Landscape Excel & Signed PDFs")
     
     report_type = st.radio(
         "Choose Report Deliverable",
@@ -620,7 +636,7 @@ elif page == "📑 Formal Reports":
 # PAGE 9: REPORT ARCHIVE
 # ==============================================================================
 elif page == "📂 Report Archive":
-    st.subheader("📂 Report Archive & Document Library")
+    render_hero_header(user, "Historical Report Archive & Integrity Vault", "Download Past Verified MIS Deliverables with SHA-256 Checksums")
     archived_df = core.list_archived_reports()
     
     if archived_df.empty:
@@ -658,7 +674,7 @@ elif page == "📂 Report Archive":
 # PAGE 10: PMS IMPORT & ETL
 # ==============================================================================
 elif page == "🔌 PMS Import & ETL":
-    st.subheader("🔌 PMS Connectors & Column Mapping Studio")
+    render_hero_header(user, "PMS Ingestion & ETL Integration Gateway", "Multi-Source Connectors (CSV/Excel, SQL, REST Stream) & Fuzzy Column Mapping")
     
     src_mode = st.radio("Choose Ingestion Connector", ["📁 File Upload & Column Mapping", "🗄️ SQL DB (SQLAlchemy)", "⚡ Live PMS Gateway (API)"], horizontal=True)
     
@@ -738,7 +754,7 @@ elif page == "🔌 PMS Import & ETL":
 # PAGE 11: AUTOMATION SCHEDULER
 # ==============================================================================
 elif page == "⏱ Automation Scheduler":
-    st.subheader("⏱️ Automated Report Schedulers & Dispatch Engine")
+    render_hero_header(user, "Automated Report Scheduler & Email Dispatch", "Dynamic Cron Frequency, Auto-Retry Engine, and Corporate SMTP Delivery")
     
     st.markdown("##### Active Scheduled Jobs")
     st.dataframe(
@@ -826,7 +842,7 @@ elif page == "⏱ Automation Scheduler":
 # PAGE 12: POWER BI INTEGRATION
 # ==============================================================================
 elif page == "📊 Power BI Integration":
-    st.subheader("📊 Microsoft Power BI Star-Schema Export & Integration Guide")
+    render_hero_header(user, "Enterprise Power BI Star-Schema Integration", "One-Click Dimensional Model Export & Production DAX Measure Library")
     st.caption("Matches Sakthi Hackathon Round 1 architecture proposal for seamless enterprise BI connectivity.")
     
     col_pb1, col_pb2 = st.columns([1, 2])
@@ -850,7 +866,7 @@ elif page == "📊 Power BI Integration":
 # PAGE 13: ENTERPRISE SETTINGS
 # ==============================================================================
 elif page == "⚙️ Enterprise Settings":
-    st.subheader("⚙️ Enterprise Configuration, RBAC & Audit Trail")
+    render_hero_header(user, "Enterprise Settings & Security Audit Trail", "Plant Targets, Per-Part COPQ Pricing, User Management & Immutable Audit Log")
     
     set_tab1, set_tab2, set_tab3 = st.tabs(["🏷️ Plant Targets & Branding", "👥 User Roles & Access", "📜 Security Audit Log"])
     
@@ -887,7 +903,7 @@ elif page == "⚙️ Enterprise Settings":
 # PAGE 14: LIVE SHOPFLOOR STREAM & DEFECT SPIKE
 # ==============================================================================
 elif page == "⚡ Live Shopfloor Stream & Defect Spike":
-    st.subheader("⚡ Live Shopfloor Streaming & Real-Time Defect Spike Injection")
+    render_hero_header(user, "Live Shopfloor Stream & Defect Spike Studio", "Real-Time PLC Telemetry Streaming & Process Out-of-Control Simulation")
     st.markdown("""
     **Judge Demonstration Facility**: Demonstrates real-time integration with shopfloor telemetry.
     Simulate incoming batch streams from PLCs/MES, or inject a sudden process deviation to observe immediate
@@ -900,7 +916,7 @@ elif page == "⚡ Live Shopfloor Stream & Defect Spike":
         st.markdown("##### 📡 Live Stream Simulation")
         if st.button("▶ Simulate Next Production Batch (5 records)", use_container_width=True):
             new_batch = core.generate_streaming_batch(n_records=5)
-            st.session_state.working_df = pd.concat([st.session_state.working_df, new_batch], ignore_index=True)
+            st.session_state.working_df = core.normalize_dates(pd.concat([st.session_state.working_df, new_batch], ignore_index=True))
             core.incremental_load(new_batch, source_type="Live Stream", source_name="PLC/MES Stream")
             core.log_audit_action(user["username"], user["role"], "STREAM_RECORDS", "Simulated 5 shopfloor records")
             st.success("Successfully streamed 5 live records into central database!")
@@ -919,7 +935,7 @@ elif page == "⚡ Live Shopfloor Stream & Defect Spike":
         )
         if st.button("⚡ Inject Defect Spike Now", type="primary", use_container_width=True):
             updated_df, alert_meta = core.inject_defect_spike(st.session_state.working_df, spike_type=spike_choice[0])
-            st.session_state.working_df = updated_df
+            st.session_state.working_df = core.normalize_dates(updated_df)
             st.session_state.live_spike_alert = alert_meta
             core.log_audit_action(user["username"], user["role"], "INJECT_SPIKE", f"Injected {alert_meta['defect']} on {alert_meta['machine']}")
             st.rerun()
@@ -940,24 +956,23 @@ elif page == "⚡ Live Shopfloor Stream & Defect Spike":
     copq_res = core.compute_copq(act_df)
 
     m1, m2, m3, m4, m5 = st.columns(5)
-    m1.metric("Live Total Output", f"{kpis['produced']:,} pcs")
-    m2.metric("Plant Rejection %", f"{kpis['rejection_rate_pct']:.2f}%", delta=f"{kpis['rejection_rate_pct'] - config.REJECTION_TARGET:+.2f}% vs Target", delta_color="inverse")
-    m3.metric("First-Pass Yield", f"{kpis['fpy_pct']:.2f}%")
-    m4.metric("Plant OEE", f"{kpis['oee_pct']:.1f}%")
-    m5.metric("Total COPQ (₹)", f"₹{copq_res['total_copq_inr']:,.0f}")
+    m1.metric("Live Total Output", f"{kpis['Produced']:,} pcs")
+    m2.metric("Plant Rejection %", f"{kpis['Rejection %']:.2f}%", delta=f"{kpis['Rejection %'] - config.REJECTION_TARGET:+.2f}% vs Target", delta_color="inverse")
+    m3.metric("First-Pass Yield", f"{kpis['First-Pass Yield %']:.2f}%")
+    m4.metric("Plant OEE", f"{kpis['OEE %']:.1f}%")
+    m5.metric("Total COPQ (₹)", f"₹{copq_res['total_copq']:,.0f}")
 
     # Real-Time SPC p-Chart with Spike Highlighting
     st.markdown("#### 📈 Real-Time Statistical Process Control (p-Chart)")
-    spc_data = core.compute_spc_p_chart(act_df)
-    p_df = spc_data["p_df"]
+    p_df, _live_alarms = core.compute_spc_p_chart(act_df)
 
     fig_spc = go.Figure()
     fig_spc.add_trace(go.Scatter(x=p_df["date"], y=p_df["p_pct"], mode="lines+markers", name="Daily Rejection %", line=dict(color="#1f77b4", width=2)))
     fig_spc.add_trace(go.Scatter(x=p_df["date"], y=p_df["ucl_pct"], mode="lines", name="Upper Control Limit (UCL 3σ)", line=dict(color="red", dash="dash")))
-    fig_spc.add_trace(go.Scatter(x=p_df["date"], y=p_df["center_line_pct"], mode="lines", name="Center Line (p̄)", line=dict(color="green", dash="dot")))
+    fig_spc.add_trace(go.Scatter(x=p_df["date"], y=p_df["cl_pct"], mode="lines", name="Center Line (p̄)", line=dict(color="green", dash="dot")))
 
     # Flagged out-of-control points
-    viol_mask = p_df["rule1_violation"] | p_df["rule2_violation"] | p_df["rule3_violation"]
+    viol_mask = p_df["out_of_control"]
     if viol_mask.any():
         fig_spc.add_trace(go.Scatter(
             x=p_df.loc[viol_mask, "date"],
@@ -967,7 +982,7 @@ elif page == "⚡ Live Shopfloor Stream & Defect Spike":
             name="Out-of-Control Point (Rule Violation)"
         ))
 
-    fig_spc.update_layout(height=350, margin=dict(t=20, b=20, l=40, r=20), xaxis_title="Production Date", yaxis_title="Rejection %")
+    apply_chart_theme(fig_spc, title="Real-Time Subgroup p-Chart (3σ Limits & Out-of-Control Flags)", height=350)
     st.plotly_chart(fig_spc, use_container_width=True)
 
     # Shift Defect Breakdown
@@ -975,21 +990,21 @@ elif page == "⚡ Live Shopfloor Stream & Defect Spike":
     with c_p1:
         st.markdown("##### Recent Defects by Frequency")
         recent_defects = act_df[act_df["rejected"] > 0].groupby("defect")["rejected"].sum().reset_index().sort_values(by="rejected", ascending=False)
-        fig_bar = px.bar(recent_defects, x="defect", y="rejected", color="defect", title="Defect Volume", text="rejected")
-        fig_bar.update_layout(height=280, showlegend=False, margin=dict(t=30, b=10, l=30, r=10))
+        fig_bar = px.bar(recent_defects, x="defect", y="rejected", color="defect", title="Defect Volume", text="rejected", color_discrete_sequence=["#2D7FF9", "#FF6B1A", "#00C2A8", "#FFB020", "#8B5CF6"])
+        apply_chart_theme(fig_bar, title="Defect Volume", height=280)
         st.plotly_chart(fig_bar, use_container_width=True)
     with c_p2:
         st.markdown("##### Machine Defect Concentration")
         mach_rej = act_df.groupby("machine")["rejected"].sum().reset_index().sort_values(by="rejected", ascending=False)
-        fig_pie = px.pie(mach_rej, names="machine", values="rejected", title="Machine Share of Rejection", hole=0.4)
-        fig_pie.update_layout(height=280, margin=dict(t=30, b=10, l=10, r=10))
+        fig_pie = px.pie(mach_rej, names="machine", values="rejected", title="Machine Share of Rejection", hole=0.4, color_discrete_sequence=["#2D7FF9", "#FF6B1A", "#00C2A8", "#FFB020"])
+        apply_chart_theme(fig_pie, title="Machine Share of Rejection", height=280)
         st.plotly_chart(fig_pie, use_container_width=True)
 
 # ==============================================================================
 # PAGE 15: TIME SAVED & ROI COUNTER
 # ==============================================================================
 elif page == "⏱️ Time Saved & ROI Counter":
-    st.subheader("⏱️ Quantifiable Business Value & Time-Saved ROI Counter")
+    render_hero_header(user, "Business Value & Time-Saved ROI Counter", "Quantifying 99.4% Engineering Time Recovery & Annual Financial Savings")
     st.markdown("""
     Evaluates the quantifiable impact of automated reporting against traditional manual Excel workflows
     in a typical automotive foundry & machining tier-1 supplier.
@@ -1034,9 +1049,10 @@ elif page == "⏱️ Time Saved & ROI Counter":
     st.markdown("#### 📊 Comparative Time Consumption by Deliverable (Minutes per Month)")
     comp_df = pd.DataFrame(roi["breakdown"])
     fig_comp = go.Figure()
-    fig_comp.add_trace(go.Bar(x=comp_df["report_name"], y=comp_df["manual_hours_monthly"], name="Manual Workflow (Hours/Mo)", marker_color="#d62728"))
-    fig_comp.add_trace(go.Bar(x=comp_df["report_name"], y=comp_df["auto_hours_monthly"], name="SmartMIS Automated (Hours/Mo)", marker_color="#2ca02c"))
+    fig_comp.add_trace(go.Bar(x=comp_df["report_name"], y=comp_df["manual_hours_monthly"], name="Manual Workflow (Hours/Mo)", marker_color="#FF4D4F"))
+    fig_comp.add_trace(go.Bar(x=comp_df["report_name"], y=comp_df["auto_hours_monthly"], name="SmartMIS Automated (Hours/Mo)", marker_color="#22C55E"))
     fig_comp.update_layout(barmode="group", height=320, margin=dict(t=20, b=20, l=40, r=20), xaxis_title="Reporting Deliverable", yaxis_title="Hours / Month")
+    apply_chart_theme(fig_comp, title="Monthly Time Consumption: Manual vs Automated (Hours/Mo)", height=320)
     st.plotly_chart(fig_comp, use_container_width=True)
 
     st.markdown("##### Detailed Breakdown Table")
@@ -1060,7 +1076,7 @@ elif page == "⏱️ Time Saved & ROI Counter":
 # PAGE 16: REQUIREMENTS CHECKLIST
 # ==============================================================================
 elif page == "✅ Requirements Checklist":
-    st.subheader("✅ Sakthi Hackathon 2.0 (PS-005) Requirement-to-Feature Mapping")
+    render_hero_header(user, "Sakthi Hackathon 2.0 (PS-005) Requirements Matrix", "100% Traceability: 17/17 Industrial Mandates Verified and Tested")
     st.markdown("""
     Complete traceability matrix mapping every problem statement mandate from **PS-005: Automated Manufacturing MIS and Rejection Report Generator**
     directly to the SmartMIS feature implementation, module architecture, and passing automated test verification.

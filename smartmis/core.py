@@ -66,7 +66,7 @@ from executive import (
 
 # Import and re-export demo simulation, ROI, and requirement mapping
 from demo import (
-    generate_streaming_batch, inject_defect_spike,
+    generate_streaming_batch, inject_defect_spike, normalize_dates,
     compute_time_saved_roi, get_requirement_checklist,
     DEFAULT_ROI_ASSUMPTIONS
 )
@@ -93,9 +93,9 @@ def apply_filters(
     if machines:
         df = df[df["machine"].isin(machines)]
     if start:
-        df = df[df["date"] >= start]
+        df = df[pd.to_datetime(df["date"]) >= pd.to_datetime(start)]
     if end:
-        df = df[df["date"] <= end]
+        df = df[pd.to_datetime(df["date"]) <= pd.to_datetime(end)]
     return df
 
 
