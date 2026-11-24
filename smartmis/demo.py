@@ -42,6 +42,13 @@ log = logging.getLogger("smartmis.demo")
 # 1. LIVE SHOPFLOOR STREAMING & DEFECT SPIKE INJECTION
 # ==============================================================================
 
+def normalize_dates(df: pd.DataFrame) -> pd.DataFrame:
+    """Keep the 'date' column as plain datetime.date objects (the type used across the app)."""
+    out = df.copy()
+    out["date"] = pd.to_datetime(out["date"]).dt.date
+    return out
+
+
 def generate_streaming_batch(
     base_date: Optional[date] = None,
     n_records: int = 5,
@@ -88,7 +95,7 @@ def generate_streaming_batch(
         heat_num = f"H24-LIVE-{np.random.randint(100, 999)}"
 
         rows.append({
-            "date": pd.to_datetime(curr_date),
+            "date": curr_date,
             "department": dept,
             "product": prod,
             "product_type": ptype,
@@ -177,7 +184,7 @@ def inject_defect_spike(
         total_injected_rejected += rejected
 
         spike_rows.append({
-            "date": latest_date,
+            "date": latest_date.date(),
             "department": dept,
             "product": product,
             "product_type": prod_type,

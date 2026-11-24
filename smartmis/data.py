@@ -301,9 +301,9 @@ def apply_filters(
     if machines:
         df = df[df["machine"].isin(machines)]
     if start:
-        df = df[df["date"] >= start]
+        df = df[pd.to_datetime(df["date"]) >= pd.to_datetime(start)]
     if end:
-        df = df[df["date"] <= end]
+        df = df[pd.to_datetime(df["date"]) <= pd.to_datetime(end)]
     return df
 
 
@@ -757,6 +757,17 @@ def incremental_load(
 
     # Append new records
     if inserted_count > 0:
+        # Align to the existing table schema; add any brand-new columns so inserts never fail.
+        try:
+            table_cols = [r[1] for r in con.execute("PRAGMA table_info(pms_data)").fetchall()]
+        except Exception:
+            table_cols = []
+        if table_cols:
+            for c in new_records.columns:
+                if c not in table_cols:
+                    con.execute(f'ALTER TABLE pms_data ADD COLUMN "{c}" TEXT')
+            table_cols = [r[1] for r in con.execute("PRAGMA table_info(pms_data)").fetchall()]
+            new_records = new_records.reindex(columns=table_cols)
         new_records.to_sql("pms_data", con, if_exists="append", index=False)
 
     # Log operation

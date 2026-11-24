@@ -10,6 +10,8 @@ uvicorn
 sqlalchemy
 requests
 pytest
-PyYAML
+pyyaml
 scipy
 statsmodels
+httpx
+playwright
