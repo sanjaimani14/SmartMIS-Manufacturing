@@ -16,11 +16,21 @@ import config
 import core
 
 try:
-    from ui.theme import inject_theme, render_hero_header, render_sidebar_brand, render_sidebar_footer
-    from ui.charts import apply_chart_theme
+    from ui.theme import inject_theme, render_hero_header, render_sidebar_brand, render_sidebar_footer, kpi_card
+    from ui.charts import (
+        apply_chart_theme,
+        create_gauge_chart,
+        create_copq_treemap,
+        create_process_heatmap,
+    )
 except ImportError:
-    from smartmis.ui.theme import inject_theme, render_hero_header, render_sidebar_brand, render_sidebar_footer
-    from smartmis.ui.charts import apply_chart_theme
+    from smartmis.ui.theme import inject_theme, render_hero_header, render_sidebar_brand, render_sidebar_footer, kpi_card
+    from smartmis.ui.charts import (
+        apply_chart_theme,
+        create_gauge_chart,
+        create_copq_treemap,
+        create_process_heatmap,
+    )
 
 logging.basicConfig(level=logging.INFO)
 st.set_page_config(
@@ -185,9 +195,42 @@ if page == "🏠 Home & Overview":
     kpi_tot = core.compute_advanced_kpis(df)
     copq_tot = core.compute_copq(df)
     
-    col_h1.metric("Total Central Records", f"{len(df):,}", f"{df.date.min()} to {df.date.max()}")
-    col_h2.metric("Plant Blended OEE", f"{kpi_tot['OEE %']:.1f}%", f"FPY: {kpi_tot['First-Pass Yield %']:.1f}%")
-    col_h3.metric("Cost of Poor Quality", f"₹{copq_tot['total_copq']:,.0f}", f"Scrap Loss: ₹{copq_tot['total_scrap_cost']:,.0f}")
+    # Extract sparkline trend data
+    try:
+        daily_prod_spk = df.groupby("date")["produced"].sum().tail(14).tolist()
+        daily_rej_spk = df.groupby("date")["rejected"].sum().tail(14).tolist()
+    except Exception:
+        daily_prod_spk, daily_rej_spk = None, None
+
+    kpi_card(
+        title="Total Central Records",
+        value=f"{len(df):,} lots",
+        delta=f"Active: {df.date.min()} to {df.date.max()}",
+        icon="📦",
+        color="blue",
+        sparkline_data=daily_prod_spk,
+        container=col_h1,
+        help_text="Total verified production batches in central database",
+    )
+    kpi_card(
+        title="Plant Blended OEE",
+        value=f"{kpi_tot['OEE %']:.1f}%",
+        delta=f"FPY: {kpi_tot['First-Pass Yield %']:.1f}% | Target: 85.0%",
+        icon="⚡",
+        color="teal",
+        container=col_h2,
+        help_text="Overall Equipment Effectiveness (Availability × Performance × Quality)",
+    )
+    kpi_card(
+        title="Cost of Poor Quality",
+        value=f"₹{copq_tot['total_copq']:,.0f}",
+        delta=f"Unrecoverable Scrap: ₹{copq_tot['total_scrap_cost']:,.0f}",
+        icon="💰",
+        color="purple",
+        sparkline_data=daily_rej_spk,
+        container=col_h3,
+        help_text="Calculated scrap and rework loss across automotive parts",
+    )
     
     st.markdown("---")
     st.markdown("#### 🚀 Platform Architecture & Hackathon Capabilities")
@@ -228,24 +271,80 @@ elif page == "📊 Executive Dashboard":
     cur, dl = core.kpi_with_delta(df, sel_dept, prods, d0, d1, shift, mach)
     adv_kpi = core.compute_advanced_kpis(f)
     
-    # Primary KPI row
+    # Primary KPI row with sparklines
     col1, col2, col3, col4 = st.columns(4)
-    for c, k in zip([col1, col2, col3, col4], ["Produced", "Good", "Rejected", "Rejection %"]):
-        cls = core.status(float(cur[k])) if k == "Rejection %" else ""
-        d = dl[k]
-        arrow = "" if d is None else ("▲" if d > 0 else "▼" if d < 0 else "■")
-        dtxt = "no previous data" if d is None else f"{arrow} {abs(d)}{' pts' if k == 'Rejection %' else '%'} vs previous period"
-        c.markdown(f'<div class="card {cls}"><div class="l">{k}</div><div class="v">{cur[k]:,}</div><div class="d">{dtxt}</div></div>', unsafe_allow_html=True)
-    
+    daily_stats = f.groupby("date").agg(
+        produced=("produced", "sum"),
+        good=("good", "sum"),
+        rejected=("rejected", "sum"),
+    ).reset_index()
+    daily_stats["rejection_%"] = (100.0 * daily_stats["rejected"] / daily_stats["produced"].replace(0, 1)).round(2)
+
+    spk_prod = daily_stats["produced"].tail(14).tolist()
+    spk_good = daily_stats["good"].tail(14).tolist()
+    spk_rej = daily_stats["rejected"].tail(14).tolist()
+    spk_rate = daily_stats["rejection_%"].tail(14).tolist()
+
+    d_prod = dl["Produced"]
+    d_good = dl["Good"]
+    d_rej = dl["Rejected"]
+    d_rate = dl["Rejection %"]
+
+    kpi_card(
+        title="Produced Output",
+        value=f"{cur['Produced']:,} pcs",
+        delta=f"{'+' if d_prod and d_prod > 0 else ''}{d_prod}% vs prev" if d_prod is not None else "Baseline active",
+        icon="🏭",
+        color="blue",
+        sparkline_data=spk_prod,
+        container=col1,
+    )
+    kpi_card(
+        title="Good Conforming",
+        value=f"{cur['Good']:,} pcs",
+        delta=f"{'+' if d_good and d_good > 0 else ''}{d_good}% vs prev" if d_good is not None else "1st pass conform",
+        icon="✅",
+        color="green",
+        sparkline_data=spk_good,
+        container=col2,
+    )
+    kpi_card(
+        title="Rejected Parts",
+        value=f"{cur['Rejected']:,} pcs",
+        delta=f"{'+' if d_rej and d_rej > 0 else ''}{d_rej}% vs prev" if d_rej is not None else "Scrap + rework",
+        delta_color="inverse",
+        icon="⚠️",
+        color="orange",
+        sparkline_data=spk_rej,
+        container=col3,
+    )
+    kpi_card(
+        title="Rejection %",
+        value=f"{cur['Rejection %']:.2f}%",
+        delta=f"{'+' if d_rate and d_rate > 0 else ''}{d_rate} pts vs prev" if d_rate is not None else f"Target: {config.REJECTION_TARGET}%",
+        delta_color="inverse",
+        icon="🎯",
+        color="rejection %",
+        sparkline_data=spk_rate,
+        container=col4,
+    )
+
+    # Real-Time Dial Gauges for OEE and Rejection Rate
+    cg1, cg2 = st.columns(2)
+    fig_gauge_oee = create_gauge_chart(adv_kpi['OEE %'], title="Overall Equipment Effectiveness (OEE)", target=85.0, gauge_type="oee", height=230)
+    cg1.plotly_chart(fig_gauge_oee, use_container_width=True)
+    fig_gauge_rej = create_gauge_chart(cur['Rejection %'], title="Plant Rejection Rate (% Non-Conformance)", target=config.REJECTION_TARGET, gauge_type="rejection", height=230)
+    cg2.plotly_chart(fig_gauge_rej, use_container_width=True)
+
     # Secondary OEE & Quality Intelligence Ribbon
-    st.markdown("##### ⚙️ Manufacturing OEE & Operational Metrics")
+    st.markdown("##### ⚙️ Manufacturing OEE & Operational Intelligence Ribbon")
     o1, o2, o3, o4, o5, o6 = st.columns(6)
-    o1.metric("OEE", f"{adv_kpi['OEE %']}%", f"A:{adv_kpi['Availability %']}% P:{adv_kpi['Performance %']}% Q:{adv_kpi['Quality %']}%")
-    o2.metric("First-Pass Yield", f"{adv_kpi['First-Pass Yield %']}%", "Conforming at 1st pass")
-    o3.metric("Scrap vs Rework", f"{adv_kpi['Scrap %']}% / {adv_kpi['Rework %']}%", f"{adv_kpi['Scrap']:,} sc / {adv_kpi['Rework']:,} rw")
-    o4.metric("Quality PPM", f"{adv_kpi['PPM']:,}", "Parts per million defective")
-    o5.metric("Downtime %", f"{adv_kpi['Downtime %']}%", f"{adv_kpi['Total Downtime (hrs)']} hrs total")
-    o6.metric("Plan Adherence", f"{adv_kpi['Plan Adherence %']}%", "Target adherence")
+    kpi_card("Plant OEE", f"{adv_kpi['OEE %']}%", delta=f"A:{adv_kpi['Availability %']}% P:{adv_kpi['Performance %']}%", icon="⚙️", color="teal", container=o1)
+    kpi_card("First-Pass Yield", f"{adv_kpi['First-Pass Yield %']}%", delta="1st-pass conforming", icon="🎖️", color="green", container=o2)
+    kpi_card("Scrap vs Rework", f"{adv_kpi['Scrap %']}% / {adv_kpi['Rework %']}%", delta=f"{adv_kpi['Scrap']:,} sc / {adv_kpi['Rework']:,} rw", icon="♻️", color="orange", container=o3)
+    kpi_card("Quality PPM", f"{adv_kpi['PPM']:,}", delta="Parts per million defective", icon="🔬", color="red", container=o4)
+    kpi_card("Downtime %", f"{adv_kpi['Downtime %']}%", delta=f"{adv_kpi['Total Downtime (hrs)']} hrs total", icon="⏱️", color="amber", container=o5)
+    kpi_card("Plan Adherence", f"{adv_kpi['Plan Adherence %']}%", delta="Schedule adherence", icon="🎯", color="blue", container=o6)
     
     st.write("")
     
@@ -298,7 +397,7 @@ elif page == "📊 Executive Dashboard":
         go.Scatter(x=t.date, y=t["rejection_%"], name="Rejection %", yaxis="y2", line=dict(color="#E8420C", width=3))
     ])
     combo.add_hline(y=config.REJECTION_TARGET, yref="y2", line_dash="dash", line_color="gray", annotation_text=f"Target ({config.REJECTION_TARGET}%)")
-    combo.update_layout(title="Daily Production Volume vs Rejection % Trend", yaxis2=dict(overlaying="y", side="right"), legend=dict(orientation="h", y=-.2), margin=dict(t=40, b=10))
+    apply_chart_theme(combo, title="Daily Production Volume vs Rejection % Trend", height=340)
     ca.plotly_chart(combo, use_container_width=True)
     
     p = core.pareto(f)
@@ -306,8 +405,14 @@ elif page == "📊 Executive Dashboard":
         go.Bar(x=p.defect, y=p.rejected, name="Rejected", marker_color="#E8420C"),
         go.Scatter(x=p.defect, y=p["cum_%"], name="Cumulative %", yaxis="y2", line=dict(color="#1F3A5F", width=2))
     ])
-    par.update_layout(title="Defect Pareto (80/20 Non-Conformance Analysis)", yaxis2=dict(overlaying="y", side="right", range=[0, 105]), legend=dict(orientation="h", y=-.2), margin=dict(t=40, b=10))
+    par.update_layout(yaxis2=dict(overlaying="y", side="right", range=[0, 105]))
+    apply_chart_theme(par, title="Defect Pareto (80/20 Non-Conformance Analysis)", height=340)
     cb.plotly_chart(par, use_container_width=True)
+
+    # Process Heatmap Matrix
+    st.markdown("#### 🌡️ Shopfloor Defect Concentration Matrix")
+    fig_heat = create_process_heatmap(f, title="Non-Conformance Intensity: Defect Type across Production Equipment", height=320)
+    st.plotly_chart(fig_heat, use_container_width=True)
 
 # ==============================================================================
 # PAGE 3: ASK YOUR DATA (NATURAL LANGUAGE QUERY)
@@ -364,7 +469,16 @@ elif page == "📈 Quality Control & SPC":
     with col_s2:
         st.markdown("##### 🚨 SPC Rules & Control Violations")
         crit_cnt = sum(1 for a in spc_alarms if a["severity"] == "CRITICAL")
-        st.metric("Out-of-Control Points", f"{len(spc_alarms)} points", f"{crit_cnt} beyond 3σ limits")
+        kpi_card(
+            title="Out-of-Control Alarms",
+            value=f"{len(spc_alarms)} alarms",
+            delta=f"{crit_cnt} beyond 3σ limits",
+            delta_color="inverse",
+            icon="🚨",
+            color="red" if crit_cnt > 0 else ("amber" if len(spc_alarms) > 0 else "green"),
+            container=col_s2,
+            help_text="Western Electric rules violations & 3-sigma out-of-control signals",
+        )
         for alarm in spc_alarms[:5]:
             badge = "badge-crit" if alarm["severity"] == "CRITICAL" else "badge-warn"
             st.markdown(f"<span class='{badge}'>{alarm['rule']}</span> **{alarm['label']}**: {alarm['value_pct']}% (Limit: {alarm['limit_pct']}%)", unsafe_allow_html=True)
@@ -426,11 +540,16 @@ elif page == "💰 Cost of Poor Quality (COPQ)":
     rw_loss = copq_data["total_rework_cost"]
     sc_pct = round(100.0 * sc_loss / max(1.0, tot_loss), 1)
     
-    f1.metric("Total COPQ Financial Loss", f"₹{tot_loss:,.0f}", f"₹{round(tot_loss/max(1, len(f)), 0):,.0f} / batch")
-    f2.metric("Scrap Unrecoverable Loss", f"₹{sc_loss:,.0f}", f"{sc_pct}% of total COPQ")
-    f3.metric("Rework Rectification Loss", f"₹{rw_loss:,.0f}", f"{100-sc_pct}% of total COPQ")
-    f4.metric("Avg Loss Per Rejection", f"₹{round(tot_loss / max(1, float(f['rejected'].sum())), 0):,.0f}", "Blended part cost")
+    kpi_card("Total COPQ Financial Loss", f"₹{tot_loss:,.0f}", delta=f"₹{round(tot_loss/max(1, len(f)), 0):,.0f} / batch", icon="💰", color="purple", container=f1)
+    kpi_card("Scrap Unrecoverable Loss", f"₹{sc_loss:,.0f}", delta=f"{sc_pct}% of total COPQ", icon="🔥", color="red", container=f2)
+    kpi_card("Rework Rectification Loss", f"₹{rw_loss:,.0f}", delta=f"{100-sc_pct}% of total COPQ", icon="🔄", color="orange", container=f3)
+    kpi_card("Avg Loss Per Rejection", f"₹{round(tot_loss / max(1, float(f['rejected'].sum())), 0):,.0f}", delta="Blended unit cost", delta_color="neutral", icon="📊", color="blue", container=f4)
     
+    # Hierarchical COPQ Financial Loss Treemap
+    st.markdown("#### 🗺️ Hierarchical COPQ Financial Loss Treemap (Dept ➔ Machine ➔ Defect)")
+    fig_tree = create_copq_treemap(f, cost_table=copq_costs, title="COPQ Loss Allocation: Department ➔ Machine ➔ Defect", height=370)
+    st.plotly_chart(fig_tree, use_container_width=True)
+
     st.write("")
     c_p1, c_p2 = st.columns(2)
     top_p = copq_data["top_products"]
@@ -441,7 +560,8 @@ elif page == "💰 Cost of Poor Quality (COPQ)":
             color="total_copq_inr", color_continuous_scale="Reds",
             labels={"total_copq_inr": "Total COPQ (₹)", "product": "Product"}
         )
-        fig_prods.update_layout(yaxis=dict(autorange="reversed"), margin=dict(t=40, b=10))
+        fig_prods.update_layout(yaxis=dict(autorange="reversed"))
+        apply_chart_theme(fig_prods, title="Top 5 Products by Financial Loss (₹ INR)", height=300)
         c_p1.plotly_chart(fig_prods, use_container_width=True)
         
     top_d = copq_data["top_defects"]
@@ -452,7 +572,7 @@ elif page == "💰 Cost of Poor Quality (COPQ)":
             color="total_copq_inr", color_continuous_scale="Burg",
             labels={"total_copq_inr": "Total Loss (₹)", "defect": "Defect Type"}
         )
-        fig_def.update_layout(margin=dict(t=40, b=10))
+        apply_chart_theme(fig_def, title="Top 5 Defects by Financial Loss (₹ INR)", height=300)
         c_p2.plotly_chart(fig_def, use_container_width=True)
         
     with st.expander("🛠️ Edit Cost-per-Part Parameters (Scrap & Rework in ₹ INR)", expanded=False):
@@ -492,7 +612,7 @@ elif page == "🔮 14-Day Forecasting":
             line=dict(width=0), name="95% Confidence Band"
         ))
         fig_rf.add_hline(y=config.REJECTION_TARGET, line_dash="dot", line_color="gray", annotation_text=f"Target ({config.REJECTION_TARGET}%)")
-        fig_rf.update_layout(title="Rejection % Trajectory (Historical vs 14-Day Forward Forecast)", yaxis_title="Rejection %", margin=dict(t=40, b=10), legend=dict(orientation="h", y=-.2))
+        apply_chart_theme(fig_rf, title="Rejection % Trajectory (Historical vs 14-Day Forward Forecast)", height=340)
         fc1.plotly_chart(fig_rf, use_container_width=True)
         
     prod_fc = fc_data.get("produced", pd.DataFrame())
@@ -508,7 +628,7 @@ elif page == "🔮 14-Day Forecasting":
             x=fc_p["date"], y=fc_p["lower_95"], mode="lines", fill="tonexty", fillcolor="rgba(31, 58, 95, 0.15)",
             line=dict(width=0), name="95% Output Range"
         ))
-        fig_pf.update_layout(title="Daily Output Volume (14-Day Production Capacity Forecast)", yaxis_title="Produced Units", margin=dict(t=40, b=10), legend=dict(orientation="h", y=-.2))
+        apply_chart_theme(fig_pf, title="Daily Output Volume (14-Day Production Capacity Forecast)", height=340)
         fc2.plotly_chart(fig_pf, use_container_width=True)
 
 # ==============================================================================
@@ -956,11 +1076,26 @@ elif page == "⚡ Live Shopfloor Stream & Defect Spike":
     copq_res = core.compute_copq(act_df)
 
     m1, m2, m3, m4, m5 = st.columns(5)
-    m1.metric("Live Total Output", f"{kpis['Produced']:,} pcs")
-    m2.metric("Plant Rejection %", f"{kpis['Rejection %']:.2f}%", delta=f"{kpis['Rejection %'] - config.REJECTION_TARGET:+.2f}% vs Target", delta_color="inverse")
-    m3.metric("First-Pass Yield", f"{kpis['First-Pass Yield %']:.2f}%")
-    m4.metric("Plant OEE", f"{kpis['OEE %']:.1f}%")
-    m5.metric("Total COPQ (₹)", f"₹{copq_res['total_copq']:,.0f}")
+    kpi_card("Live Total Output", f"{kpis['Produced']:,} pcs", icon="🏭", color="blue", container=m1)
+    kpi_card(
+        "Plant Rejection %",
+        f"{kpis['Rejection %']:.2f}%",
+        delta=f"{kpis['Rejection %'] - config.REJECTION_TARGET:+.2f}% vs Target",
+        delta_color="inverse",
+        icon="🎯",
+        color="rejection %",
+        container=m2
+    )
+    kpi_card("First-Pass Yield", f"{kpis['First-Pass Yield %']:.2f}%", delta="1st-pass conforming", icon="🎖️", color="green", container=m3)
+    kpi_card("Plant OEE", f"{kpis['OEE %']:.1f}%", delta=f"A:{kpis['Availability %']}% P:{kpis['Performance %']}%", icon="⚙️", color="teal", container=m4)
+    kpi_card("Total COPQ (₹)", f"₹{copq_res['total_copq']:,.0f}", delta=f"Scrap: ₹{copq_res['total_scrap_cost']:,.0f}", icon="💰", color="purple", container=m5)
+
+    # Real-Time Telemetry Dial Gauges
+    cg1, cg2 = st.columns(2)
+    fig_live_oee = create_gauge_chart(kpis['OEE %'], title="Live Telemetry: Plant OEE", target=85.0, gauge_type="oee", height=230)
+    cg1.plotly_chart(fig_live_oee, use_container_width=True)
+    fig_live_rej = create_gauge_chart(kpis['Rejection %'], title="Live Telemetry: Non-Conformance Rate", target=config.REJECTION_TARGET, gauge_type="rejection", height=230)
+    cg2.plotly_chart(fig_live_rej, use_container_width=True)
 
     # Real-Time SPC p-Chart with Spike Highlighting
     st.markdown("#### 📈 Real-Time Statistical Process Control (p-Chart)")
@@ -1036,12 +1171,12 @@ elif page == "⏱️ Time Saved & ROI Counter":
     with c_roi2:
         st.markdown("##### 🚀 ROI & Efficiency Scorecard")
         rc1, rc2 = st.columns(2)
-        rc1.metric("Monthly Hours Saved", f"{roi['total_hours_saved_monthly']:.1f} hrs", delta=f"{roi['overall_efficiency_pct']:.1f}% Efficiency")
-        rc2.metric("Annual Direct Cost Saved", f"₹{roi['annual_savings_inr']:,.0f}", delta=f"{roi['annual_hours_saved']:.0f} Engineer Hrs/Yr")
+        kpi_card("Monthly Hours Saved", f"{roi['total_hours_saved_monthly']:.1f} hrs", delta=f"{roi['overall_efficiency_pct']:.1f}% Efficiency", icon="⏱️", color="teal", container=rc1)
+        kpi_card("Annual Direct Savings", f"₹{roi['annual_savings_inr']:,.0f}", delta=f"{roi['annual_hours_saved']:.0f} Eng Hrs/Yr", icon="💵", color="green", container=rc2)
 
         rc3, rc4 = st.columns(2)
-        rc3.metric("Manual Prep Time / Month", f"{roi['total_manual_hours_monthly']:.1f} hrs", help="Legacy copy-paste spreadsheet consolidation")
-        rc4.metric("SmartMIS Automated Time", f"{roi['total_auto_hours_monthly']:.2f} hrs", delta="-99.4% Time Reduction", delta_color="inverse")
+        kpi_card("Manual Prep Time", f"{roi['total_manual_hours_monthly']:.1f} hrs/mo", delta="Legacy spreadsheet work", delta_color="neutral", icon="📄", color="orange", container=rc3)
+        kpi_card("SmartMIS Automated Time", f"{roi['total_auto_hours_monthly']:.2f} hrs/mo", delta="-99.4% Time Reduction", delta_color="normal", icon="🚀", color="blue", container=rc4)
 
         st.caption(f"🌱 **Sustainability Impact**: Eliminates ~**{roi['annual_paper_saved_sheets']:,} printed pages / year** through digital PDF/Excel archiving.")
 

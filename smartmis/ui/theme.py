@@ -4,7 +4,8 @@ Provides inject_theme(), render_hero_header(), render_sidebar_brand(), and rende
 All styling is pure CSS with zero heavy third-party dependencies.
 """
 from datetime import date
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
+import numpy as np
 import streamlit as st
 
 
@@ -450,6 +451,19 @@ def inject_theme() -> None:
         margin-right: 7px;
         vertical-align: middle;
     }
+
+    /* ==========================================================================
+       9. PREMIUM INDUSTRIAL KPI CARDS & HOVER LIFT
+       ========================================================================== */
+    .smartmis-kpi-card {
+        transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.22s ease !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    .smartmis-kpi-card:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 12px 28px rgba(11, 31, 58, 0.12) !important;
+    }
     </style>
     """
     st.markdown(theme_css, unsafe_allow_html=True)
@@ -643,3 +657,243 @@ def render_sidebar_footer() -> None:
     </div>
     """
     st.sidebar.markdown(footer_html, unsafe_allow_html=True)
+
+
+# ==============================================================================
+# 4. REUSABLE INDUSTRIAL KPI CARD COMPONENT
+# ==============================================================================
+
+KPI_COLOR_SCHEMES: Dict[str, Dict[str, str]] = {
+    "blue": {
+        "bg": "linear-gradient(135deg, rgba(45, 127, 249, 0.08) 0%, rgba(56, 189, 248, 0.03) 100%)",
+        "border": "rgba(45, 127, 249, 0.22)",
+        "accent": "linear-gradient(90deg, #2D7FF9, #38BDF8)",
+        "icon_bg": "rgba(45, 127, 249, 0.12)",
+        "icon_color": "#2D7FF9",
+        "sparkline": "#2D7FF9",
+    },
+    "green": {
+        "bg": "linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(74, 222, 128, 0.03) 100%)",
+        "border": "rgba(34, 197, 94, 0.22)",
+        "accent": "linear-gradient(90deg, #22C55E, #4ADE80)",
+        "icon_bg": "rgba(34, 197, 94, 0.12)",
+        "icon_color": "#22C55E",
+        "sparkline": "#22C55E",
+    },
+    "orange": {
+        "bg": "linear-gradient(135deg, rgba(255, 107, 26, 0.08) 0%, rgba(255, 149, 0, 0.03) 100%)",
+        "border": "rgba(255, 107, 26, 0.22)",
+        "accent": "linear-gradient(90deg, #FF6B1A, #FFB020)",
+        "icon_bg": "rgba(255, 107, 26, 0.12)",
+        "icon_color": "#FF6B1A",
+        "sparkline": "#FF6B1A",
+    },
+    "red": {
+        "bg": "linear-gradient(135deg, rgba(255, 77, 79, 0.09) 0%, rgba(254, 202, 202, 0.04) 100%)",
+        "border": "rgba(255, 77, 79, 0.25)",
+        "accent": "linear-gradient(90deg, #FF4D4F, #F87171)",
+        "icon_bg": "rgba(255, 77, 79, 0.14)",
+        "icon_color": "#FF4D4F",
+        "sparkline": "#FF4D4F",
+    },
+    "amber": {
+        "bg": "linear-gradient(135deg, rgba(255, 176, 32, 0.08) 0%, rgba(251, 191, 36, 0.03) 100%)",
+        "border": "rgba(255, 176, 32, 0.22)",
+        "accent": "linear-gradient(90deg, #FFB020, #FBBF24)",
+        "icon_bg": "rgba(255, 176, 32, 0.12)",
+        "icon_color": "#FFB020",
+        "sparkline": "#FFB020",
+    },
+    "teal": {
+        "bg": "linear-gradient(135deg, rgba(0, 194, 168, 0.08) 0%, rgba(45, 212, 191, 0.03) 100%)",
+        "border": "rgba(0, 194, 168, 0.22)",
+        "accent": "linear-gradient(90deg, #00C2A8, #2DD4BF)",
+        "icon_bg": "rgba(0, 194, 168, 0.12)",
+        "icon_color": "#00C2A8",
+        "sparkline": "#00C2A8",
+    },
+    "purple": {
+        "bg": "linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(167, 139, 250, 0.03) 100%)",
+        "border": "rgba(139, 92, 246, 0.22)",
+        "accent": "linear-gradient(90deg, #8B5CF6, #A78BFA)",
+        "icon_bg": "rgba(139, 92, 246, 0.12)",
+        "icon_color": "#8B5CF6",
+        "sparkline": "#8B5CF6",
+    },
+}
+
+
+def _generate_sparkline_svg(data: List[float], color: str) -> str:
+    """Generates a responsive, zero-dependency inline SVG sparkline with gradient area fill."""
+    if not data or len(data) < 2:
+        return ""
+    clean_data = [float(v) for v in data if v is not None and not (isinstance(v, float) and np.isnan(v))]
+    if len(clean_data) < 2:
+        return ""
+    min_v = min(clean_data)
+    max_v = max(clean_data)
+    rng = max(1e-5, max_v - min_v)
+    w = 140
+    h = 32
+    pad = 4
+    pts = []
+    for idx, val in enumerate(clean_data):
+        x = round(pad + (idx / (len(clean_data) - 1)) * (w - 2 * pad), 1)
+        y = round((h - pad) - ((val - min_v) / rng) * (h - 2 * pad), 1)
+        pts.append((x, y))
+    pts_str = " ".join(f"{x},{y}" for x, y in pts)
+    area_pts = f"{pts[0][0]},{h} " + pts_str + f" {pts[-1][0]},{h}"
+    cid = abs(hash(str(clean_data) + color)) % 100000
+
+    return f"""
+    <div style="margin-top: 8px; width: 100%;">
+        <svg width="100%" height="{h}" viewBox="0 0 {w} {h}" preserveAspectRatio="none" style="display: block; overflow: visible;">
+            <defs>
+                <linearGradient id="spk_grad_{cid}" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="{color}" stop-opacity="0.30"/>
+                    <stop offset="100%" stop-color="{color}" stop-opacity="0.02"/>
+                </linearGradient>
+            </defs>
+            <polygon points="{area_pts}" fill="url(#spk_grad_{cid})" />
+            <polyline points="{pts_str}" fill="none" stroke="{color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="{pts[-1][0]}" cy="{pts[-1][1]}" r="3.2" fill="{color}" stroke="#FFFFFF" stroke-width="1.2" />
+        </svg>
+    </div>
+    """
+
+
+def kpi_card(
+    title: str,
+    value: Any,
+    delta: Optional[str] = None,
+    icon: str = "📊",
+    color: str = "blue",
+    sparkline_data: Optional[List[float]] = None,
+    delta_color: str = "normal",
+    container: Any = None,
+    help_text: Optional[str] = None,
+) -> str:
+    """
+    Renders a boardroom-grade, responsive KPI card with gradient background,
+    accent bar, large typography, delta badge, subtle icon, hover lift,
+    and optional inline SVG sparkline.
+
+    Args:
+        title: Card label (e.g. 'Production Output')
+        value: Primary metric number or text (e.g. '18,450 pcs', '84.2%')
+        delta: Optional trend delta text (e.g. '+1.2% vs target', 'A:88% P:92% Q:96%')
+        icon: Emoji or icon symbol
+        color: 'blue' (production), 'green' (good/yield), 'orange' (rejected),
+               'red' (alert), 'amber' (warning), 'teal' (OEE), 'purple' (COPQ),
+               or 'rejection %' (auto-evaluates red/amber/green vs target).
+        sparkline_data: Optional list of numeric points for mini trend chart
+        delta_color: 'normal' (+ is good/green, - is bad/red),
+                     'inverse' (+ is bad/red, - is good/green), or 'neutral'
+        container: Streamlit container/column to render into (defaults to st)
+        help_text: Optional tooltip hover title
+    """
+    # Evaluate dynamic rejection color if specified
+    color_lower = color.lower()
+    if color_lower in ("rejection %", "rejection_pct", "auto_rejection"):
+        try:
+            val_num = float(str(value).replace("%", "").replace(",", "").strip())
+            if val_num <= 3.0:
+                scheme_key = "green"
+            elif val_num <= 4.5:
+                scheme_key = "amber"
+            else:
+                scheme_key = "red"
+        except (ValueError, TypeError):
+            scheme_key = "orange"
+    elif color_lower in KPI_COLOR_SCHEMES:
+        scheme_key = color_lower
+    else:
+        scheme_key = "blue"
+
+    scheme = KPI_COLOR_SCHEMES[scheme_key]
+
+    # Delta badge rendering
+    delta_html = ""
+    if delta is not None and str(delta).strip():
+        d_str = str(delta).strip()
+        is_positive = d_str.startswith("+") or "▲" in d_str
+        is_negative = d_str.startswith("-") or "▼" in d_str
+
+        if delta_color == "inverse":
+            badge_bg = "rgba(239, 68, 68, 0.12)" if is_positive else ("rgba(34, 197, 94, 0.14)" if is_negative else "rgba(100, 116, 139, 0.10)")
+            badge_fg = "#DC2626" if is_positive else ("#16A34A" if is_negative else "#475569")
+        elif delta_color == "neutral":
+            badge_bg = "rgba(100, 116, 139, 0.10)"
+            badge_fg = "#475569"
+        else:  # normal
+            badge_bg = "rgba(34, 197, 94, 0.14)" if is_positive else ("rgba(239, 68, 68, 0.12)" if is_negative else "rgba(100, 116, 139, 0.10)")
+            badge_fg = "#16A34A" if is_positive else ("#DC2626" if is_negative else "#475569")
+
+        delta_html = f"""
+        <div style="
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: {badge_bg};
+            color: {badge_fg};
+            font-size: 0.74rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-top: 4px;
+            line-height: 1.25;
+        ">{d_str}</div>
+        """
+
+    spark_html = _generate_sparkline_svg(sparkline_data, scheme["sparkline"]) if sparkline_data else ""
+    title_attr = f'title="{help_text}"' if help_text else ""
+
+    card_html = f"""
+    <div class="smartmis-kpi-card" {title_attr} style="
+        background: {scheme['bg']};
+        border: 1px solid {scheme['border']};
+        border-radius: 16px;
+        padding: 16px 18px 14px 18px;
+        position: relative;
+        box-shadow: 0 4px 16px rgba(11, 31, 58, 0.05);
+        margin-bottom: 12px;
+    ">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 3.5px; background: {scheme['accent']};"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="
+                color: #64748B;
+                font-size: 0.74rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+            ">{title}</span>
+            <div style="
+                background: {scheme['icon_bg']};
+                color: {scheme['icon_color']};
+                width: 30px;
+                height: 30px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.95rem;
+                box-shadow: inset 0 0 0 1px {scheme['border']};
+            ">{icon}</div>
+        </div>
+        <div style="
+            color: #0B1F3A;
+            font-size: 1.72rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin: 2px 0 4px 0;
+        ">{value}</div>
+        {delta_html}
+        {spark_html}
+    </div>
+    """
+
+    target = container if container is not None else st
+    target.markdown(card_html, unsafe_allow_html=True)
+    return card_html
+
