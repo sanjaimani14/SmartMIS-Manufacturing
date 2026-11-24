@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit as st
 
 # Industrial Color Palette matching design direction
 INDUSTRIAL_PALETTE: List[str] = [
@@ -76,6 +77,7 @@ def apply_chart_theme(
     show_legend: bool = True,
     hovermode: Optional[str] = None,
     legend_bottom: bool = True,
+    dark_mode: Optional[bool] = None,
 ) -> go.Figure:
     """
     Applies unified 'Smart Factory Control Room' styling to any Plotly figure.
@@ -89,17 +91,45 @@ def apply_chart_theme(
     if fig is None:
         return fig
 
+    if dark_mode is None:
+        try:
+            dark_mode = st.session_state.get("dark_mode", False) if hasattr(st, "session_state") else False
+        except Exception:
+            dark_mode = False
+
+    font_color = "#E6EEF9" if dark_mode else "#334155"
+    grid_color = "rgba(255, 255, 255, 0.10)" if dark_mode else "#E2E8F0"
+    line_color = "rgba(255, 255, 255, 0.20)" if dark_mode else "#CBD5E1"
+    tick_color = "#9FB3CC" if dark_mode else "#64748B"
+    title_color = "#FFFFFF" if dark_mode else "#0B1F3A"
+    legend_bg = "rgba(14, 34, 64, 0.85)" if dark_mode else "rgba(255, 255, 255, 0.85)"
+    legend_border = "rgba(255, 255, 255, 0.15)" if dark_mode else "#E2E8F0"
+
     updates: Dict[str, Any] = {
         "paper_bgcolor": CHART_LAYOUT_DEFAULTS["paper_bgcolor"],
         "plot_bgcolor": CHART_LAYOUT_DEFAULTS["plot_bgcolor"],
         "colorway": INDUSTRIAL_PALETTE,
-        "font": CHART_LAYOUT_DEFAULTS["font"],
+        "font": {
+            "family": "Plus Jakarta Sans, Inter, -apple-system, sans-serif",
+            "color": font_color,
+            "size": 12,
+        },
         "hoverlabel": CHART_LAYOUT_DEFAULTS["hoverlabel"],
         "showlegend": show_legend,
     }
 
     if legend_bottom and show_legend:
-        updates["legend"] = CHART_LAYOUT_DEFAULTS["legend"]
+        updates["legend"] = {
+            "orientation": "h",
+            "yanchor": "top",
+            "y": -0.20,
+            "xanchor": "center",
+            "x": 0.5,
+            "bgcolor": legend_bg,
+            "bordercolor": legend_border,
+            "borderwidth": 1,
+            "font": {"color": font_color, "size": 11},
+        }
 
     if hovermode:
         updates["hovermode"] = hovermode
@@ -107,7 +137,7 @@ def apply_chart_theme(
     if title:
         updates["title"] = {
             "text": f"<b>{title}</b>",
-            "font": {"size": 14, "color": "#0B1F3A", "family": "Plus Jakarta Sans, sans-serif"},
+            "font": {"size": 14, "color": title_color, "family": "Plus Jakarta Sans, sans-serif"},
             "x": 0.02,
             "y": 0.96,
         }
@@ -142,17 +172,33 @@ def apply_chart_theme(
     fig.update_layout(**updates)
 
     # Style axes
-    fig.update_xaxes(**CHART_LAYOUT_DEFAULTS["xaxis"])
-    fig.update_yaxes(**CHART_LAYOUT_DEFAULTS["yaxis"])
+    fig.update_xaxes(
+        gridcolor=grid_color,
+        linecolor=line_color,
+        zerolinecolor=line_color,
+        showline=True,
+        ticks="outside",
+        tickfont={"color": tick_color, "size": 11},
+        title_font={"color": font_color, "size": 12},
+    )
+    fig.update_yaxes(
+        gridcolor=grid_color,
+        linecolor=line_color,
+        zerolinecolor=line_color,
+        showline=True,
+        ticks="outside",
+        tickfont={"color": tick_color, "size": 11},
+        title_font={"color": font_color, "size": 12},
+    )
 
     # If secondary y-axis exists (e.g. Pareto or 2-axis charts), style it
     try:
         fig.update_layout(
             yaxis2=dict(
-                gridcolor="#E2E8F0",
-                linecolor="#CBD5E1",
-                tickfont=dict(color="#64748B", size=11),
-                title_font=dict(color="#334155", size=12),
+                gridcolor=grid_color,
+                linecolor=line_color,
+                tickfont=dict(color=tick_color, size=11),
+                title_font=dict(color=font_color, size=12),
             )
         )
     except Exception:
@@ -173,12 +219,26 @@ def create_gauge_chart(
     target: Optional[float] = None,
     gauge_type: str = "oee",
     height: int = 240,
+    dark_mode: Optional[bool] = None,
 ) -> go.Figure:
     """
     Renders an industrial radial dial gauge with red/amber/green process performance zones.
     - gauge_type='oee': higher is better (red <60%, amber 60-75%, blue 75-85%, green 85-100%)
     - gauge_type='rejection': lower is better (green <=3%, amber 3-5%, red >5%)
     """
+    if dark_mode is None:
+        try:
+            dark_mode = st.session_state.get("dark_mode", False) if hasattr(st, "session_state") else False
+        except Exception:
+            dark_mode = False
+
+    number_color = "#FFFFFF" if dark_mode else "#0B1F3A"
+    title_color = "#E6EEF9" if dark_mode else "#64748B"
+    tick_color = "#9FB3CC" if dark_mode else "#64748B"
+    gauge_bg = "rgba(255, 255, 255, 0.06)" if dark_mode else "#FFFFFF"
+    gauge_border = "rgba(255, 255, 255, 0.15)" if dark_mode else "#E2E8F0"
+    threshold_color = "#FFFFFF" if dark_mode else "#0B1F3A"
+
     fig = go.Figure()
 
     if gauge_type == "oee":
@@ -206,17 +266,17 @@ def create_gauge_chart(
     indicator_args: Dict[str, Any] = {
         "mode": "gauge+number" if target is None else "gauge+number+delta",
         "value": round(float(value), 2),
-        "number": {"suffix": val_suffix, "font": {"family": "Plus Jakarta Sans, sans-serif", "size": 30, "color": "#0B1F3A"}},
-        "title": {"text": f"<b>{title}</b>", "font": {"family": "Plus Jakarta Sans, sans-serif", "size": 13, "color": "#64748B"}},
+        "number": {"suffix": val_suffix, "font": {"family": "Plus Jakarta Sans, sans-serif", "size": 30, "color": number_color}},
+        "title": {"text": f"<b>{title}</b>", "font": {"family": "Plus Jakarta Sans, sans-serif", "size": 13, "color": title_color}},
         "gauge": {
-            "axis": {"range": [min_val, max_val], "tickwidth": 1, "tickcolor": "#64748B", "tickfont": {"size": 10, "color": "#64748B"}},
+            "axis": {"range": [min_val, max_val], "tickwidth": 1, "tickcolor": tick_color, "tickfont": {"size": 10, "color": tick_color}},
             "bar": {"color": bar_color, "thickness": 0.32},
-            "bgcolor": "white",
+            "bgcolor": gauge_bg,
             "borderwidth": 1,
-            "bordercolor": "#E2E8F0",
+            "bordercolor": gauge_border,
             "steps": steps,
             "threshold": {
-                "line": {"color": "#0B1F3A", "width": 3},
+                "line": {"color": threshold_color, "width": 3},
                 "thickness": 0.8,
                 "value": threshold_val,
             },

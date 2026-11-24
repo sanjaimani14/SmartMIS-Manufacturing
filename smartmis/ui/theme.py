@@ -25,29 +25,115 @@ def inject_theme(dark_mode: bool = False) -> None:
     - Flashing alert banner, glowing CTA buttons, chat bubbles, and progress rings
     - Clean hiding of Streamlit's default footer and header clutter
     """
-    bg_gradient = (
-        "linear-gradient(180deg, #071322 0%, #0B1C33 50%, #0F2544 100%)"
-        if dark_mode
-        else "linear-gradient(180deg, #F4F8FF 0%, #EDF3FC 50%, #E6EEF9 100%)"
-    )
-    text_color = "#F8FAFC" if dark_mode else "#0F172A"
-    card_bg = "#0B1C33" if dark_mode else "#FFFFFF"
-    card_border = "rgba(255, 255, 255, 0.12)" if dark_mode else "#E2E8F0"
+    if dark_mode:
+        bg_gradient = "linear-gradient(180deg, #071322 0%, #0B1C33 50%, #0F2544 100%)"
+        text_primary = "#E6EEF9"
+        text_body = "#E6EEF9"
+        text_muted = "#9FB3CC"
+        text_heading = "#FFFFFF"
+        card_bg = "#0E2240"
+        card_glass = "rgba(255, 255, 255, 0.06)"
+        card_border = "rgba(255, 255, 255, 0.12)"
+        input_bg = "#14305A"
+        popover_bg = "#0E2240"
+        tab_active_bg = "#2D7FF9"
+        border_color = "rgba(255, 255, 255, 0.12)"
+    else:
+        bg_gradient = "linear-gradient(180deg, #F4F8FF 0%, #EDF3FC 50%, #E6EEF9 100%)"
+        text_primary = "#0B1F3A"
+        text_body = "#1E293B"
+        text_muted = "#475569"
+        text_heading = "#0B1F3A"
+        card_bg = "#FFFFFF"
+        card_glass = "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)"
+        card_border = "#E2E8F0"
+        input_bg = "#FFFFFF"
+        popover_bg = "#FFFFFF"
+        tab_active_bg = "#0B1F3A"
+        border_color = "#E2E8F0"
 
     dynamic_css = f"""
     <style>
-    html, body, [class*="css"] {{
-        color: {text_color};
+    /* ==========================================================================
+       CSS VARIABLES FOR BOTH THEMES
+       ========================================================================== */
+    :root, .stApp {{
+        --bg: {bg_gradient};
+        --card: {card_bg};
+        --card-glass: {card_glass};
+        --text: {text_body};
+        --text-primary: {text_primary};
+        --text-heading: {text_heading};
+        --muted: {text_muted};
+        --text-muted: {text_muted};
+        --border: {border_color};
+        --card-border: {card_border};
+        --input-bg: {input_bg};
+        --popover-bg: {popover_bg};
+        --accent: #FF6B1A;
+        --accent-blue: #2D7FF9;
+        --accent-teal: #00C2A8;
+        --tab-active-bg: {tab_active_bg};
     }}
+
     .stApp {{
         background: {bg_gradient} !important;
         background-attachment: fixed !important;
+        color: {text_body} !important;
     }}
+
+    /* Global typography in active theme */
+    h1, h2, h3, h4, h5, h6 {{
+        color: {text_heading} !important;
+    }}
+    p, li, span, label, div[data-testid="stMarkdownContainer"] p, div[data-testid="stMarkdownContainer"] li {{
+        color: {text_body} !important;
+    }}
+    [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p, .stCaption, small {{
+        color: {text_muted} !important;
+    }}
+
+    {"/* EXPLICIT DARK MODE ENFORCEMENT */" if dark_mode else "/* LIGHT MODE ENFORCEMENT */"}
+    {"div[data-testid=\"stMarkdownContainer\"] h1, div[data-testid=\"stMarkdownContainer\"] h2, div[data-testid=\"stMarkdownContainer\"] h3, div[data-testid=\"stMarkdownContainer\"] h4, div[data-testid=\"stMarkdownContainer\"] h5, div[data-testid=\"stMarkdownContainer\"] h6 { color: #FFFFFF !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stMarkdownContainer\"] p, div[data-testid=\"stMarkdownContainer\"] span, div[data-testid=\"stMarkdownContainer\"] li { color: #E6EEF9 !important; }" if dark_mode else ""}
+    {"[data-testid=\"stCaptionContainer\"] p, [data-testid=\"stCaptionContainer\"] span { color: #9FB3CC !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stMetric\"] { background: #0E2240 !important; border: 1px solid rgba(255, 255, 255, 0.12) !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stMetric\"] div[data-testid=\"stMetricValue\"] { color: #FFFFFF !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stMetric\"] label[data-testid=\"stMetricLabel\"] { color: #9FB3CC !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stExpander\"] { background: #0E2240 !important; border: 1px solid rgba(255, 255, 255, 0.12) !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stExpander\"] summary { color: #FFFFFF !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stExpander\"] summary span { color: #FFFFFF !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stExpander\"] [data-testid=\"stExpanderDetails\"] { background: #0B1C33 !important; color: #E6EEF9 !important; }" if dark_mode else ""}
+    {"div[data-baseweb=\"tab-list\"] { background: rgba(14, 34, 64, 0.85) !important; border: 1px solid rgba(255, 255, 255, 0.12) !important; }" if dark_mode else ""}
+    {"button[data-baseweb=\"tab\"] { color: #9FB3CC !important; }" if dark_mode else ""}
+    {"button[data-baseweb=\"tab\"][aria-selected=\"true\"] { background: #2D7FF9 !important; color: #FFFFFF !important; }" if dark_mode else ""}
+    {"div[data-baseweb=\"input\"], div[data-baseweb=\"select\"] > div, div[data-baseweb=\"base-input\"] { background: #14305A !important; border: 1px solid rgba(255, 255, 255, 0.16) !important; color: #E6EEF9 !important; }" if dark_mode else ""}
+    {"div[data-baseweb=\"input\"] input, div[data-baseweb=\"select\"] input { color: #E6EEF9 !important; }" if dark_mode else ""}
+    {"div[data-baseweb=\"select\"] span, div[data-baseweb=\"select\"] div { color: #E6EEF9 !important; }" if dark_mode else ""}
+    {"div[data-baseweb=\"popover\"], div[data-baseweb=\"menu\"], ul[role=\"listbox\"] { background: #0E2240 !important; border: 1px solid rgba(45, 127, 249, 0.3) !important; }" if dark_mode else ""}
+    {"li[role=\"option\"] { color: #E6EEF9 !important; background: transparent !important; }" if dark_mode else ""}
+    {"li[role=\"option\"]:hover, li[role=\"option\"][aria-selected=\"true\"] { background: rgba(45, 127, 249, 0.25) !important; color: #FFFFFF !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stCheckbox\"] label span, div[data-testid=\"stRadio\"] label span { color: #E6EEF9 !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stDataFrame\"], div[data-testid=\"stTable\"] { background: #0E2240 !important; border: 1px solid rgba(255, 255, 255, 0.12) !important; }" if dark_mode else ""}
+    {"button[kind=\"secondary\"], button[data-testid=\"baseButton-secondary\"] { background: #14305A !important; color: #E6EEF9 !important; border: 1px solid rgba(255, 255, 255, 0.16) !important; }" if dark_mode else ""}
+    {"button[kind=\"secondary\"]:hover, button[data-testid=\"baseButton-secondary\"]:hover { background: #1C3D6E !important; border-color: #2D7FF9 !important; color: #FFFFFF !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stTooltipContent\"], [data-baseweb=\"tooltip\"] { background: #0B1F3A !important; color: #FFFFFF !important; border: 1px solid rgba(45, 127, 249, 0.4) !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stSelectbox\"] label, div[data-testid=\"stMultiSelect\"] label, div[data-testid=\"stTextInput\"] label, div[data-testid=\"stNumberInput\"] label, div[data-testid=\"stDateInput\"] label { color: #E6EEF9 !important; }" if dark_mode else ""}
+    {"div[data-testid=\"stSelectbox\"] p, div[data-testid=\"stMultiSelect\"] p { color: #E6EEF9 !important; }" if dark_mode else ""}
     </style>
     """
 
     static_css = """
     <style>
+    /* ==========================================================================
+       0. VIEWPORT & BLOCK CONTAINER PADDING
+       ========================================================================== */
+    .block-container {
+        padding-top: 1.2rem !important;
+        padding-bottom: 2rem !important;
+        max-width: 100% !important;
+    }
+
     /* ==========================================================================
        1. GOOGLE FONTS & GLOBAL TYPOGRAPHY
        ========================================================================== */
@@ -90,6 +176,56 @@ def inject_theme(dark_mode: bool = False) -> None:
     section[data-testid="stSidebar"] hr {
         border-color: rgba(255, 255, 255, 0.1) !important;
         margin: 0.85rem 0 !important;
+    }
+
+    /* Sidebar Expander "Switch User Profile" styling */
+    section[data-testid="stSidebar"] div[data-testid="stExpander"] {
+        background: #14305A !important;
+        border: 1px solid rgba(45, 127, 249, 0.35) !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        transition: border-color 0.22s ease, box-shadow 0.22s ease !important;
+        margin-bottom: 0.85rem !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stExpander"]:hover {
+        border-color: #FF6B1A !important;
+        box-shadow: 0 0 14px rgba(255, 107, 26, 0.3) !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stExpander"] summary {
+        background: #14305A !important;
+        color: #E6EEF9 !important;
+        font-weight: 700 !important;
+        font-size: 0.90rem !important;
+        padding: 10px 14px !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stExpander"] summary svg {
+        color: #E6EEF9 !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+        background: #0E2240 !important;
+        color: #E6EEF9 !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        padding: 12px 14px !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stExpander"] label {
+        color: #9FB3CC !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stExpander"] div[data-baseweb="select"] > div {
+        background: #14305A !important;
+        border: 1px solid rgba(45, 127, 249, 0.3) !important;
+        color: #FFFFFF !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stExpander"] div[data-baseweb="select"] * {
+        color: #FFFFFF !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stExpander"] button {
+        background: linear-gradient(135deg, #FF6B1A 0%, #FF8533 100%) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 12px rgba(255, 107, 26, 0.35) !important;
     }
 
     /* Transform Streamlit native radio into Option-Menu styled navigation cards */
@@ -180,7 +316,7 @@ def inject_theme(dark_mode: bool = False) -> None:
         pointer-events: none;
     }
 
-    /* Hide default radio circle completely */
+    /* Hide default radio circle input */
     div[data-testid="stSidebar"] div[data-testid="stRadio"] input[type="radio"] {
         display: none !important;
     }
@@ -188,9 +324,29 @@ def inject_theme(dark_mode: bool = False) -> None:
         display: none !important;
     }
 
-    /* Text inside navigation buttons */
+    /* Radio nav container item */
+    div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label div[data-testid="stMarkdownContainer"] {
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* Unselected radio dot: hollow circle with muted text */
+    div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label div[data-testid="stMarkdownContainer"]::before {
+        content: "" !important;
+        display: inline-block !important;
+        width: 12px !important;
+        height: 12px !important;
+        min-width: 12px !important;
+        border-radius: 50% !important;
+        border: 2px solid #64748B !important;
+        background: transparent !important;
+        margin-right: 9px !important;
+        transition: all 0.2s ease !important;
+    }
+
+    /* Text inside unselected navigation buttons: muted */
     div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label div[data-testid="stMarkdownContainer"] p {
-        color: #CBD5E1 !important;
+        color: #9FB3CC !important;
         font-size: 0.91rem !important;
         font-weight: 500 !important;
         margin: 0 !important;
@@ -203,15 +359,17 @@ def inject_theme(dark_mode: bool = False) -> None:
         border-color: rgba(45, 127, 249, 0.4) !important;
         transform: translateX(4px) !important;
     }
-
+    div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover div[data-testid="stMarkdownContainer"]::before {
+        border-color: #CBD5E1 !important;
+    }
     div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover div[data-testid="stMarkdownContainer"] p {
         color: #FFFFFF !important;
     }
 
-    /* ACTIVE state for selected nav item (Safety Orange Accent) */
+    /* ACTIVE state for selected nav item: orange filled dot, bold white text, orange-tinted background pill */
     div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked),
     div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label[data-checked="true"] {
-        background: linear-gradient(90deg, rgba(255, 107, 26, 0.24) 0%, rgba(45, 127, 249, 0.16) 100%) !important;
+        background: linear-gradient(90deg, rgba(255, 107, 26, 0.22) 0%, rgba(45, 127, 249, 0.12) 100%) !important;
         border-left: 4px solid #FF6B1A !important;
         border-top: 1px solid rgba(255, 107, 26, 0.35) !important;
         border-right: 1px solid rgba(45, 127, 249, 0.25) !important;
@@ -220,7 +378,16 @@ def inject_theme(dark_mode: bool = False) -> None:
         transform: translateX(3px) !important;
     }
 
-    div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) div[data-testid="stMarkdownContainer"] p {
+    /* Orange filled dot on selected item */
+    div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) div[data-testid="stMarkdownContainer"]::before,
+    div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label[data-checked="true"] div[data-testid="stMarkdownContainer"]::before {
+        border-color: #FF6B1A !important;
+        background: #FF6B1A !important;
+        box-shadow: 0 0 8px rgba(255, 107, 26, 0.8) !important;
+    }
+
+    div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) div[data-testid="stMarkdownContainer"] p,
+    div[data-testid="stSidebar"] div[data-testid="stRadio"] > div[role="radiogroup"] > label[data-checked="true"] div[data-testid="stMarkdownContainer"] p {
         color: #FFFFFF !important;
         font-weight: 700 !important;
     }
@@ -229,10 +396,10 @@ def inject_theme(dark_mode: bool = False) -> None:
        3. METRIC CARDS (ROUNDED 16px WITH HOVER LIFT)
        ========================================================================== */
     div[data-testid="stMetric"] {
-        background: #FFFFFF !important;
+        background: var(--card, #FFFFFF) !important;
         border-radius: 16px !important;
         padding: 18px 22px !important;
-        border: 1px solid #E2E8F0 !important;
+        border: 1px solid var(--card-border, #E2E8F0) !important;
         box-shadow: 0 4px 20px rgba(11, 31, 58, 0.05) !important;
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
         position: relative !important;
@@ -253,7 +420,7 @@ def inject_theme(dark_mode: bool = False) -> None:
     div[data-testid="stMetric"]:hover {
         transform: translateY(-3px) !important;
         box-shadow: 0 10px 28px rgba(11, 31, 58, 0.1) !important;
-        border-color: #CBD5E1 !important;
+        border-color: var(--accent-blue, #2D7FF9) !important;
     }
 
     div[data-testid="stMetric"] label[data-testid="stMetricLabel"] {
@@ -261,14 +428,14 @@ def inject_theme(dark_mode: bool = False) -> None:
         font-weight: 700 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.05em !important;
-        color: #64748B !important;
+        color: var(--text-muted, #64748B) !important;
         margin-bottom: 4px !important;
     }
 
     div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
         font-size: 1.85rem !important;
         font-weight: 800 !important;
-        color: #0B1F3A !important;
+        color: var(--text-heading, #0B1F3A) !important;
         letter-spacing: -0.02em !important;
     }
 
@@ -304,11 +471,11 @@ def inject_theme(dark_mode: bool = False) -> None:
     /* Secondary / standard buttons */
     button[kind="secondary"],
     button[data-testid="baseButton-secondary"] {
-        background: #FFFFFF !important;
-        color: #0B1F3A !important;
+        background: var(--input-bg, #FFFFFF) !important;
+        color: var(--text-body, #0B1F3A) !important;
         font-weight: 600 !important;
         font-size: 0.92rem !important;
-        border: 1.5px solid #CBD5E1 !important;
+        border: 1.5px solid var(--border, #CBD5E1) !important;
         border-radius: 12px !important;
         padding: 0.55rem 1.25rem !important;
         box-shadow: 0 2px 6px rgba(11, 31, 58, 0.04) !important;
@@ -317,7 +484,7 @@ def inject_theme(dark_mode: bool = False) -> None:
 
     button[kind="secondary"]:hover,
     button[data-testid="baseButton-secondary"]:hover {
-        background: #F8FAFC !important;
+        background: var(--card-glass, #F8FAFC) !important;
         border-color: #2D7FF9 !important;
         color: #2D7FF9 !important;
         transform: translateY(-2px) !important;
@@ -349,11 +516,11 @@ def inject_theme(dark_mode: bool = False) -> None:
     }
 
     div[data-baseweb="tab-list"] {
-        background: rgba(255, 255, 255, 0.75) !important;
+        background: var(--card, rgba(255, 255, 255, 0.75)) !important;
         backdrop-filter: blur(8px) !important;
         border-radius: 14px !important;
         padding: 6px !important;
-        border: 1px solid #E2E8F0 !important;
+        border: 1px solid var(--border, #E2E8F0) !important;
         gap: 6px !important;
         box-shadow: 0 2px 8px rgba(11, 31, 58, 0.04) !important;
     }
@@ -363,19 +530,19 @@ def inject_theme(dark_mode: bool = False) -> None:
         padding: 8px 18px !important;
         font-weight: 600 !important;
         font-size: 0.92rem !important;
-        color: #64748B !important;
+        color: var(--text-muted, #64748B) !important;
         border: none !important;
         background: transparent !important;
         transition: all 0.2s ease !important;
     }
 
     button[data-baseweb="tab"]:hover {
-        color: #0B1F3A !important;
-        background: rgba(45, 127, 249, 0.06) !important;
+        color: var(--text-heading, #0B1F3A) !important;
+        background: rgba(45, 127, 249, 0.12) !important;
     }
 
     button[data-baseweb="tab"][aria-selected="true"] {
-        background: #0B1F3A !important;
+        background: var(--tab-active-bg, #0B1F3A) !important;
         color: #FFFFFF !important;
         box-shadow: 0 4px 12px rgba(11, 31, 58, 0.2) !important;
     }
@@ -385,9 +552,9 @@ def inject_theme(dark_mode: bool = False) -> None:
        ========================================================================== */
     /* Expanders */
     div[data-testid="stExpander"] {
-        background: #FFFFFF !important;
+        background: var(--card, #FFFFFF) !important;
         border-radius: 14px !important;
-        border: 1px solid #E2E8F0 !important;
+        border: 1px solid var(--border, #E2E8F0) !important;
         box-shadow: 0 2px 10px rgba(11, 31, 58, 0.03) !important;
         margin-bottom: 0.75rem !important;
         overflow: hidden !important;
@@ -395,7 +562,7 @@ def inject_theme(dark_mode: bool = False) -> None:
 
     div[data-testid="stExpander"] summary {
         font-weight: 700 !important;
-        color: #0B1F3A !important;
+        color: var(--text-heading, #0B1F3A) !important;
         font-size: 0.95rem !important;
         padding: 12px 16px !important;
     }
@@ -404,8 +571,8 @@ def inject_theme(dark_mode: bool = False) -> None:
     div[data-baseweb="input"],
     div[data-baseweb="select"] > div {
         border-radius: 10px !important;
-        border: 1px solid #CBD5E1 !important;
-        background: #FFFFFF !important;
+        border: 1px solid var(--border, #CBD5E1) !important;
+        background: var(--input-bg, #FFFFFF) !important;
         transition: all 0.2s ease !important;
     }
 
@@ -418,10 +585,10 @@ def inject_theme(dark_mode: bool = False) -> None:
     /* Dataframes */
     div[data-testid="stDataFrame"] {
         border-radius: 14px !important;
-        border: 1px solid #E2E8F0 !important;
+        border: 1px solid var(--border, #E2E8F0) !important;
         box-shadow: 0 4px 16px rgba(11, 31, 58, 0.04) !important;
         overflow: hidden !important;
-        background: #FFFFFF !important;
+        background: var(--card, #FFFFFF) !important;
     }
 
     /* Callouts / Info / Success / Error alert banners */
@@ -522,11 +689,11 @@ def inject_theme(dark_mode: bool = False) -> None:
         line-height: 1.4 !important;
     }
     .chat-bubble-ai {
-        background: #FFFFFF !important;
-        color: #0F172A !important;
+        background: var(--card, #FFFFFF) !important;
+        color: var(--text, #0F172A) !important;
         padding: 16px 20px !important;
         border-radius: 18px 18px 18px 4px !important;
-        border: 1px solid #E2E8F0 !important;
+        border: 1px solid var(--card-border, #E2E8F0) !important;
         margin-right: auto !important;
         margin-bottom: 14px !important;
         box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06) !important;
@@ -535,12 +702,12 @@ def inject_theme(dark_mode: bool = False) -> None:
 
     /* Smart Insights Cards */
     .smart-insight-card {
-        background: #FFFFFF !important;
+        background: var(--card-glass, #FFFFFF) !important;
         border-radius: 14px !important;
         padding: 14px 18px !important;
         margin-bottom: 12px !important;
         box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04) !important;
-        border: 1px solid #E2E8F0 !important;
+        border: 1px solid var(--card-border, #E2E8F0) !important;
         transition: transform 0.2s ease, box-shadow 0.2s ease !important;
     }
     .smart-insight-card:hover {
@@ -559,19 +726,27 @@ def inject_theme(dark_mode: bool = False) -> None:
 
     /* Feature Grid Cards */
     .feature-card {
-        background: #FFFFFF !important;
+        background: var(--card-glass, #FFFFFF) !important;
         border-radius: 14px !important;
         padding: 22px 20px !important;
         box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
-        border: 1px solid #E2E8F0 !important;
+        border: 1px solid var(--card-border, #E2E8F0) !important;
         position: relative !important;
         overflow: hidden !important;
         height: 100% !important;
         transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+        backdrop-filter: blur(8px) !important;
     }
     .feature-card:hover {
         transform: translateY(-4px) !important;
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1) !important;
+        box-shadow: 0 12px 28px rgba(45, 127, 249, 0.15) !important;
+        border-color: #2D7FF9 !important;
+    }
+    .feature-card h4 {
+        color: var(--text-heading, #0B1F3A) !important;
+    }
+    .feature-card ul, .feature-card li, .feature-card p {
+        color: var(--text-muted, #64748B) !important;
     }
 
     /* Animated Stats Strip */
@@ -609,8 +784,8 @@ def inject_theme(dark_mode: bool = False) -> None:
 
     /* Big CTA Cards */
     .cta-card {
-        background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%) !important;
-        border: 1px solid #E2E8F0 !important;
+        background: var(--card-glass, linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)) !important;
+        border: 1px solid var(--card-border, #E2E8F0) !important;
         border-radius: 16px !important;
         padding: 22px 20px !important;
         text-align: center !important;
@@ -619,21 +794,29 @@ def inject_theme(dark_mode: bool = False) -> None:
         position: relative !important;
         overflow: hidden !important;
         height: 100% !important;
+        backdrop-filter: blur(8px) !important;
     }
     .cta-card:hover {
         transform: translateY(-5px) !important;
-        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12) !important;
+        box-shadow: 0 14px 30px rgba(45, 127, 249, 0.2) !important;
         border-color: #2D7FF9 !important;
+    }
+    .cta-card h3 {
+        color: var(--text-heading, #0B1F3A) !important;
+    }
+    .cta-card p {
+        color: var(--text-muted, #64748B) !important;
     }
 
     /* Document Preview Frame */
     .doc-preview-sheet {
-        background: #FFFFFF !important;
-        border: 1px solid #CBD5E1 !important;
+        background: var(--card, #FFFFFF) !important;
+        border: 1px solid var(--border, #CBD5E1) !important;
         border-radius: 10px !important;
         padding: 28px 32px !important;
         box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08) !important;
         font-family: 'Inter', sans-serif !important;
+        color: var(--text, #1E293B) !important;
     }
     </style>
     """
@@ -1031,8 +1214,8 @@ def kpi_card(
     ">
         <div style="position: absolute; top: 0; left: 0; right: 0; height: 3.5px; background: {scheme['accent']};"></div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <span style="
-                color: #64748B;
+            <span class="kpi-title" style="
+                color: var(--text-muted, #64748B);
                 font-size: 0.74rem;
                 font-weight: 700;
                 text-transform: uppercase;
@@ -1051,8 +1234,8 @@ def kpi_card(
                 box-shadow: inset 0 0 0 1px {scheme['border']};
             ">{icon}</div>
         </div>
-        <div style="
-            color: #0B1F3A;
+        <div class="kpi-value" style="
+            color: var(--text-heading, #0B1F3A);
             font-size: 1.72rem;
             font-weight: 800;
             letter-spacing: -0.02em;
@@ -1117,10 +1300,10 @@ def render_progress_ring(
     stroke_offset = round(circumference - (percentage / 100.0) * circumference, 1)
     html = f"""
     <div style="
-        background: #FFFFFF;
+        background: var(--card, #FFFFFF);
         border-radius: 16px;
         padding: 22px 26px;
-        border: 1px solid #E2E8F0;
+        border: 1px solid var(--card-border, #E2E8F0);
         box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
         display: flex;
         align-items: center;
@@ -1129,7 +1312,7 @@ def render_progress_ring(
     ">
         <div style="position: relative; width: 110px; height: 110px; flex-shrink: 0;">
             <svg width="110" height="110" viewBox="0 0 110 110" style="transform: rotate(-90deg);">
-                <circle cx="55" cy="55" r="{radius}" fill="none" stroke="#E2E8F0" stroke-width="9" />
+                <circle cx="55" cy="55" r="{radius}" fill="none" stroke="var(--border, #E2E8F0)" stroke-width="9" />
                 <circle cx="55" cy="55" r="{radius}" fill="none" stroke="#22C55E" stroke-width="9"
                     stroke-dasharray="{circumference}" stroke-dashoffset="{stroke_offset}"
                     stroke-linecap="round" />
@@ -1142,7 +1325,7 @@ def render_progress_ring(
                 align-items: center;
                 justify-content: center;
             ">
-                <span style="font-size: 1.35rem; font-weight: 800; color: #0B1F3A; line-height: 1;">{int(percentage)}%</span>
+                <span style="font-size: 1.35rem; font-weight: 800; color: var(--text-heading, #0B1F3A); line-height: 1;">{int(percentage)}%</span>
                 <span style="font-size: 0.62rem; font-weight: 800; color: #16A34A; text-transform: uppercase; margin-top: 2px;">VERIFIED</span>
             </div>
         </div>
@@ -1151,10 +1334,10 @@ def render_progress_ring(
                 <span style="background: rgba(34, 197, 94, 0.15); color: #16A34A; padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase;">
                     PS-005 COMPLIANT
                 </span>
-                <span style="color: #64748B; font-size: 0.78rem; font-weight: 600;">Sakthi Hackathon 2.0 • Round 2</span>
+                <span style="color: var(--text-muted, #64748B); font-size: 0.78rem; font-weight: 600;">Sakthi Hackathon 2.0 • Round 2</span>
             </div>
-            <h3 style="margin: 6px 0 3px 0; color: #0B1F3A; font-size: 1.25rem; font-weight: 800;">{title}</h3>
-            <p style="margin: 0; color: #64748B; font-size: 0.88rem;">{subtitle}</p>
+            <h3 style="margin: 6px 0 3px 0; color: var(--text-heading, #0B1F3A); font-size: 1.25rem; font-weight: 800;">{title}</h3>
+            <p style="margin: 0; color: var(--text-muted, #64748B); font-size: 0.88rem;">{subtitle}</p>
         </div>
     </div>
     """

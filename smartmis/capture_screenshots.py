@@ -92,23 +92,38 @@ def run_capture():
                     time.sleep(3)
                     page.wait_for_load_state("networkidle")
 
-                for label, fname in pages_to_capture:
-                    print(f"[{res_name}] Navigating to '{label}'...")
-                    target = page.locator(f'label:has-text("{label}")')
-                    if target.count() > 0:
-                        target.click()
-                        time.sleep(2.5)
-                        page.wait_for_load_state("networkidle")
-                    
-                    # Capture in resolution subfolder
-                    out_path = os.path.join(res_dir, fname)
-                    page.screenshot(path=out_path, full_page=False)
-                    print(f"Captured: {out_path}")
+                for mode in ["light", "dark"]:
+                    print(f"\n--- Setting Mode: {mode.upper()} ({res_name}) ---")
+                    toggle_input = page.locator('input[aria-label="🌙 Dark Control Room"]')
+                    if toggle_input.count() > 0:
+                        is_dark = toggle_input.is_checked()
+                        if mode == "dark" and not is_dark:
+                            page.locator('label:has-text("🌙 Dark Control Room")').click()
+                            time.sleep(2.5)
+                            page.wait_for_load_state("networkidle")
+                        elif mode == "light" and is_dark:
+                            page.locator('label:has-text("🌙 Dark Control Room")').click()
+                            time.sleep(2.5)
+                            page.wait_for_load_state("networkidle")
 
-                    # Also store in base SCREENSHOTS_DIR if default resolution
-                    if is_default:
-                        base_out = os.path.join(SCREENSHOTS_DIR, fname)
-                        page.screenshot(path=base_out, full_page=False)
+                    for label, base_fname in pages_to_capture:
+                        fname = f"{mode}_{base_fname}"
+                        print(f"[{res_name} | {mode}] Navigating to '{label}'...")
+                        target = page.locator(f'label:has-text("{label}")')
+                        if target.count() > 0:
+                            target.click()
+                            time.sleep(2.5)
+                            page.wait_for_load_state("networkidle")
+                        
+                        # Capture in resolution subfolder
+                        out_path = os.path.join(res_dir, fname)
+                        page.screenshot(path=out_path, full_page=False)
+                        print(f"Captured: {out_path}")
+
+                        # Also store in base SCREENSHOTS_DIR if default resolution
+                        if is_default:
+                            base_out = os.path.join(SCREENSHOTS_DIR, fname)
+                            page.screenshot(path=base_out, full_page=False)
 
                 context.close()
 

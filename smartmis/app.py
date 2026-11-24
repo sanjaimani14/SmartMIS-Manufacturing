@@ -174,6 +174,7 @@ if st.session_state.live_spike_alert:
 # ---- Navigation Menu & Theme Control ---------------------------------------
 st.sidebar.markdown("---")
 dark_mode = st.sidebar.toggle("🌙 Dark Control Room", value=False, key="theme_toggle")
+st.session_state["dark_mode"] = dark_mode
 inject_theme(dark_mode=dark_mode)
 
 nav_options = [
@@ -253,8 +254,8 @@ if page == "🏠 Home & Overview":
         st.markdown("""
         <div class="cta-card" style="border-top: 4px solid #FF6B1A;">
             <div style="font-size: 2.2rem; margin-bottom: 8px;">⚡</div>
-            <h3 style="color: #0B1F3A; font-size: 1.15rem; font-weight: 800; margin: 0 0 6px 0;">Live Shopfloor Stream</h3>
-            <p style="color: #64748B; font-size: 0.85rem; margin-bottom: 14px; min-height: 48px;">
+            <h3 style="color: var(--text-heading, #0B1F3A); font-size: 1.15rem; font-weight: 800; margin: 0 0 6px 0;">Live Shopfloor Stream</h3>
+            <p style="color: var(--text-muted, #64748B); font-size: 0.85rem; margin-bottom: 14px; min-height: 48px;">
                 Simulate real-time PLC batches, inject sudden defect spikes, and observe instant 3σ out-of-control triggers.
             </p>
         </div>
@@ -267,8 +268,8 @@ if page == "🏠 Home & Overview":
         st.markdown("""
         <div class="cta-card" style="border-top: 4px solid #2D7FF9;">
             <div style="font-size: 2.2rem; margin-bottom: 8px;">📑</div>
-            <h3 style="color: #0B1F3A; font-size: 1.15rem; font-weight: 800; margin: 0 0 6px 0;">Automated MIS Reports</h3>
-            <p style="color: #64748B; font-size: 0.85rem; margin-bottom: 14px; min-height: 48px;">
+            <h3 style="color: var(--text-heading, #0B1F3A); font-size: 1.15rem; font-weight: 800; margin: 0 0 6px 0;">Automated MIS Reports</h3>
+            <p style="color: var(--text-muted, #64748B); font-size: 0.85rem; margin-bottom: 14px; min-height: 48px;">
                 Generate regulatory Weekly Foundry, Machining & Monthly Rejection reports in landscape Excel & executive PDF.
             </p>
         </div>
@@ -281,8 +282,8 @@ if page == "🏠 Home & Overview":
         st.markdown("""
         <div class="cta-card" style="border-top: 4px solid #00C2A8;">
             <div style="font-size: 2.2rem; margin-bottom: 8px;">💬</div>
-            <h3 style="color: #0B1F3A; font-size: 1.15rem; font-weight: 800; margin: 0 0 6px 0;">Ask Your Data (AI)</h3>
-            <p style="color: #64748B; font-size: 0.85rem; margin-bottom: 14px; min-height: 48px;">
+            <h3 style="color: var(--text-heading, #0B1F3A); font-size: 1.15rem; font-weight: 800; margin: 0 0 6px 0;">Ask Your Data (AI)</h3>
+            <p style="color: var(--text-muted, #64748B); font-size: 0.85rem; margin-bottom: 14px; min-height: 48px;">
                 Natural-language industrial queries strictly mapped to safe, whitelisted analytics functions with charts.
             </p>
         </div>
@@ -340,8 +341,8 @@ if page == "🏠 Home & Overview":
         st.markdown("""
         <div class="feature-card" style="border-top: 4px solid #2D7FF9;">
             <div style="font-size: 1.6rem; margin-bottom: 8px;">🏭</div>
-            <h4 style="color: #0B1F3A; font-size: 0.98rem; font-weight: 800; margin: 0 0 6px 0;">Phase 1: PMS Integration</h4>
-            <ul style="color: #64748B; font-size: 0.8rem; padding-left: 16px; margin: 0; line-height: 1.5;">
+            <h4 style="color: var(--text-heading, #0B1F3A); font-size: 0.98rem; font-weight: 800; margin: 0 0 6px 0;">Phase 1: PMS Integration</h4>
+            <ul style="color: var(--text-muted, #64748B); font-size: 0.8rem; padding-left: 16px; margin: 0; line-height: 1.5;">
                 <li>Diurnal Shifts A/B/C, heat numbers & pattern IDs</li>
                 <li>CSV, SQLAlchemy & FastAPI Mock connectors</li>
                 <li>Column Mapping Studio with auto-heuristics</li>
@@ -353,8 +354,8 @@ if page == "🏠 Home & Overview":
         st.markdown("""
         <div class="feature-card" style="border-top: 4px solid #00C2A8;">
             <div style="font-size: 1.6rem; margin-bottom: 8px;">📑</div>
-            <h4 style="color: #0B1F3A; font-size: 0.98rem; font-weight: 800; margin: 0 0 6px 0;">Phase 2: Automated MIS</h4>
-            <ul style="color: #64748B; font-size: 0.8rem; padding-left: 16px; margin: 0; line-height: 1.5;">
+            <h4 style="color: var(--text-heading, #0B1F3A); font-size: 0.98rem; font-weight: 800; margin: 0 0 6px 0;">Phase 2: Automated MIS</h4>
+            <ul style="color: var(--text-muted, #64748B); font-size: 0.8rem; padding-left: 16px; margin: 0; line-height: 1.5;">
                 <li>Declarative YAML templates for new formats</li>
                 <li>Landscape Excel with native charts & frozen panes</li>
                 <li>Executive PDF reports with cover & sign-offs</li>
@@ -366,8 +367,8 @@ if page == "🏠 Home & Overview":
         st.markdown("""
         <div class="feature-card" style="border-top: 4px solid #FF6B1A;">
             <div style="font-size: 1.6rem; margin-bottom: 8px;">📈</div>
-            <h4 style="color: #0B1F3A; font-size: 0.98rem; font-weight: 800; margin: 0 0 6px 0;">Phase 3: Advanced Analytics</h4>
-            <ul style="color: #64748B; font-size: 0.8rem; padding-left: 16px; margin: 0; line-height: 1.5;">
+            <h4 style="color: var(--text-heading, #0B1F3A); font-size: 0.98rem; font-weight: 800; margin: 0 0 6px 0;">Phase 3: Advanced Analytics</h4>
+            <ul style="color: var(--text-muted, #64748B); font-size: 0.8rem; padding-left: 16px; margin: 0; line-height: 1.5;">
                 <li>Full OEE suite, FPY, PPM, and Downtime %</li>
                 <li>Cost of Poor Quality in ₹ with Top 5 cost drivers</li>
                 <li>Statistical Process Control (SPC) p-Chart (3σ)</li>
@@ -379,8 +380,8 @@ if page == "🏠 Home & Overview":
         st.markdown("""
         <div class="feature-card" style="border-top: 4px solid #8B5CF6;">
             <div style="font-size: 1.6rem; margin-bottom: 8px;">🛡️</div>
-            <h4 style="color: #0B1F3A; font-size: 0.98rem; font-weight: 800; margin: 0 0 6px 0;">Phase 4: AI & Security</h4>
-            <ul style="color: #64748B; font-size: 0.8rem; padding-left: 16px; margin: 0; line-height: 1.5;">
+            <h4 style="color: var(--text-heading, #0B1F3A); font-size: 0.98rem; font-weight: 800; margin: 0 0 6px 0;">Phase 4: AI & Security</h4>
+            <ul style="color: var(--text-muted, #64748B); font-size: 0.8rem; padding-left: 16px; margin: 0; line-height: 1.5;">
                 <li>Natural-language "Ask your data" query engine</li>
                 <li>Smart Insights (3 Findings + 3 Actions)</li>
                 <li>Role-Based Access Control (Admin/Mgr/Op)</li>
@@ -504,13 +505,13 @@ elif page == "📊 Executive Dashboard":
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 1.1rem;">💡</span>
-                        <b style="color: #0B1F3A; font-size: 0.94rem;">{i}. {f_item['title']}</b>
+                        <b style="color: var(--text-heading, #0B1F3A); font-size: 0.94rem;">{i}. {f_item['title']}</b>
                     </div>
                     <span style="background: {badge_bg}; color: {badge_fg}; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 8px; text-transform: uppercase;">
                         {f_item.get('category', 'Quality')} • {b_type}
                     </span>
                 </div>
-                <p style="margin: 0; font-size: 0.85rem; color: #475569; line-height: 1.45;">{f_item['text']}</p>
+                <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted, #475569); line-height: 1.45;">{f_item['text']}</p>
             </div>
             """, unsafe_allow_html=True)
             
@@ -522,13 +523,13 @@ elif page == "📊 Executive Dashboard":
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 1.1rem;">🎯</span>
-                        <b style="color: #0B1F3A; font-size: 0.94rem;">{i}. {a_item['title']}</b>
+                        <b style="color: var(--text-heading, #0B1F3A); font-size: 0.94rem;">{i}. {a_item['title']}</b>
                     </div>
                     <span style="background: rgba(45, 127, 249, 0.12); color: #1D4ED8; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 8px;">
                         Owner: {a_item['owner']}
                     </span>
                 </div>
-                <p style="margin: 0; font-size: 0.85rem; color: #475569; line-height: 1.45;">{a_item['text']}</p>
+                <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted, #475569); line-height: 1.45;">{a_item['text']}</p>
             </div>
             """, unsafe_allow_html=True)
             
@@ -607,16 +608,16 @@ elif page == "💬 Ask Your Data":
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 1.25rem;">🤖</span>
-                    <b style="color: #0B1F3A; font-size: 0.96rem;">SmartMIS Analytics Intelligence</b>
+                    <b style="color: var(--text-heading, #0B1F3A); font-size: 0.96rem;">SmartMIS Analytics Intelligence</b>
                 </div>
                 <span style="background: rgba(34, 197, 94, 0.15); color: #16A34A; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 6px; text-transform: uppercase;">
                     WHITELISTED SAFE
                 </span>
             </div>
-            <div style="font-size: 0.94rem; color: #1E293B; line-height: 1.5; margin-bottom: 12px;">
+            <div style="font-size: 0.94rem; color: var(--text-body, #1E293B); line-height: 1.5; margin-bottom: 12px;">
                 {ans['explanation']}
             </div>
-            <div style="display: flex; gap: 16px; font-size: 0.75rem; color: #64748B; background: #F8FAFC; padding: 8px 12px; border-radius: 8px; border: 1px solid #E2E8F0;">
+            <div style="display: flex; gap: 16px; font-size: 0.75rem; color: var(--text-muted, #64748B); background: var(--card-glass, #F8FAFC); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color, #E2E8F0);">
                 <span><b>Function:</b> <code style="color: #2D7FF9;">{ans['function_called']}()</code></span>
                 <span><b>Filters Inferred:</b> <code>{ans['filters_used']}</code></span>
             </div>
@@ -882,8 +883,8 @@ elif page == "📑 Formal Reports":
         st.markdown(f"""
         <div class="cta-card" style="border-top: 4px solid #2D7FF9; {'border-color: #2D7FF9; box-shadow: 0 8px 25px rgba(45, 127, 249, 0.2);' if sel else ''}">
             <div style="font-size: 1.8rem;">🏭</div>
-            <b style="color: #0B1F3A; font-size: 0.95rem;">Foundry Weekly</b>
-            <div style="color: #64748B; font-size: 0.76rem; margin-top: 4px;">Molding, Pouring & Scrap</div>
+            <b style="color: var(--text-heading, #0B1F3A); font-size: 0.95rem;">Foundry Weekly</b>
+            <div style="color: var(--text-muted, #64748B); font-size: 0.76rem; margin-top: 4px;">Molding, Pouring & Scrap</div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Select Foundry", key="sel_foundry", use_container_width=True):
@@ -895,8 +896,8 @@ elif page == "📑 Formal Reports":
         st.markdown(f"""
         <div class="cta-card" style="border-top: 4px solid #00C2A8; {'border-color: #00C2A8; box-shadow: 0 8px 25px rgba(0, 194, 168, 0.2);' if sel else ''}">
             <div style="font-size: 1.8rem;">⚙️</div>
-            <b style="color: #0B1F3A; font-size: 0.95rem;">Machine Shop</b>
-            <div style="color: #64748B; font-size: 0.76rem; margin-top: 4px;">CNC Spindle & Tolerances</div>
+            <b style="color: var(--text-heading, #0B1F3A); font-size: 0.95rem;">Machine Shop</b>
+            <div style="color: var(--text-muted, #64748B); font-size: 0.76rem; margin-top: 4px;">CNC Spindle & Tolerances</div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Select Machining", key="sel_machining", use_container_width=True):
@@ -908,8 +909,8 @@ elif page == "📑 Formal Reports":
         st.markdown(f"""
         <div class="cta-card" style="border-top: 4px solid #FF6B1A; {'border-color: #FF6B1A; box-shadow: 0 8px 25px rgba(255, 107, 26, 0.2);' if sel else ''}">
             <div style="font-size: 1.8rem;">📉</div>
-            <b style="color: #0B1F3A; font-size: 0.95rem;">Monthly Rejection</b>
-            <div style="color: #64748B; font-size: 0.76rem; margin-top: 4px;">Plant-Wide Monthly MIS</div>
+            <b style="color: var(--text-heading, #0B1F3A); font-size: 0.95rem;">Monthly Rejection</b>
+            <div style="color: var(--text-muted, #64748B); font-size: 0.76rem; margin-top: 4px;">Plant-Wide Monthly MIS</div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Select Monthly", key="sel_monthly", use_container_width=True):
@@ -921,8 +922,8 @@ elif page == "📑 Formal Reports":
         st.markdown(f"""
         <div class="cta-card" style="border-top: 4px solid #8B5CF6; {'border-color: #8B5CF6; box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);' if sel else ''}">
             <div style="font-size: 1.8rem;">👔</div>
-            <b style="color: #0B1F3A; font-size: 0.95rem;">Plant Head Brief</b>
-            <div style="color: #64748B; font-size: 0.76rem; margin-top: 4px;">1-Page Digest for GM</div>
+            <b style="color: var(--text-heading, #0B1F3A); font-size: 0.95rem;">Plant Head Brief</b>
+            <div style="color: var(--text-muted, #64748B); font-size: 0.76rem; margin-top: 4px;">1-Page Digest for GM</div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Select Executive", key="sel_exec", use_container_width=True):
@@ -949,37 +950,37 @@ elif page == "📑 Formal Reports":
         
         st.markdown(f"""
         <div class="doc-preview-sheet" style="margin-top: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0B1F3A; padding-bottom: 12px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color, #0B1F3A); padding-bottom: 12px; margin-bottom: 16px;">
                 <div>
-                    <h3 style="margin: 0; color: #0B1F3A; font-size: 1.35rem; font-weight: 800;">{config.COMPANY}</h3>
-                    <div style="color: #64748B; font-size: 0.85rem; font-weight: 600;">Automated Plant Head Briefing Digest</div>
+                    <h3 style="margin: 0; color: var(--text-heading, #0B1F3A); font-size: 1.35rem; font-weight: 800;">{config.COMPANY}</h3>
+                    <div style="color: var(--text-muted, #64748B); font-size: 0.85rem; font-weight: 600;">Automated Plant Head Briefing Digest</div>
                 </div>
                 <div style="text-align: right;">
                     <span style="background: rgba(34, 197, 94, 0.15); color: #16A34A; padding: 4px 10px; border-radius: 8px; font-size: 0.76rem; font-weight: 800;">
                         APPROVED FOR GM REVIEW
                     </span>
-                    <div style="color: #64748B; font-size: 0.8rem; margin-top: 4px;">Date: {date.today():%d %b %Y}</div>
+                    <div style="color: var(--text-muted, #64748B); font-size: 0.8rem; margin-top: 4px;">Date: {date.today():%d %b %Y}</div>
                 </div>
             </div>
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px;">
-                <div style="background: #F8FAFC; padding: 12px; border-radius: 8px; border: 1px solid #E2E8F0; text-align: center;">
-                    <div style="font-size: 0.72rem; color: #64748B; font-weight: 700;">PRODUCED</div>
+                <div style="background: var(--card-glass, #F8FAFC); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color, #E2E8F0); text-align: center;">
+                    <div style="font-size: 0.72rem; color: var(--text-muted, #64748B); font-weight: 700;">PRODUCED</div>
                     <div style="font-size: 1.3rem; font-weight: 800; color: #2D7FF9;">{f['produced'].sum():,}</div>
                 </div>
-                <div style="background: #F8FAFC; padding: 12px; border-radius: 8px; border: 1px solid #E2E8F0; text-align: center;">
-                    <div style="font-size: 0.72rem; color: #64748B; font-weight: 700;">REJECTION RATE</div>
+                <div style="background: var(--card-glass, #F8FAFC); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color, #E2E8F0); text-align: center;">
+                    <div style="font-size: 0.72rem; color: var(--text-muted, #64748B); font-weight: 700;">REJECTION RATE</div>
                     <div style="font-size: 1.3rem; font-weight: 800; color: #FF4D4F;">{(100.0*f['rejected'].sum()/max(1,f['produced'].sum())):.2f}%</div>
                 </div>
-                <div style="background: #F8FAFC; padding: 12px; border-radius: 8px; border: 1px solid #E2E8F0; text-align: center;">
-                    <div style="font-size: 0.72rem; color: #64748B; font-weight: 700;">FIRST-PASS YIELD</div>
+                <div style="background: var(--card-glass, #F8FAFC); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color, #E2E8F0); text-align: center;">
+                    <div style="font-size: 0.72rem; color: var(--text-muted, #64748B); font-weight: 700;">FIRST-PASS YIELD</div>
                     <div style="font-size: 1.3rem; font-weight: 800; color: #22C55E;">{(100.0*f['good'].sum()/max(1,f['produced'].sum())):.2f}%</div>
                 </div>
-                <div style="background: #F8FAFC; padding: 12px; border-radius: 8px; border: 1px solid #E2E8F0; text-align: center;">
-                    <div style="font-size: 0.72rem; color: #64748B; font-weight: 700;">TARGET REJECTION</div>
-                    <div style="font-size: 1.3rem; font-weight: 800; color: #0B1F3A;">{config.REJECTION_TARGET}%</div>
+                <div style="background: var(--card-glass, #F8FAFC); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color, #E2E8F0); text-align: center;">
+                    <div style="font-size: 0.72rem; color: var(--text-muted, #64748B); font-weight: 700;">TARGET REJECTION</div>
+                    <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-heading, #0B1F3A);">{config.REJECTION_TARGET}%</div>
                 </div>
             </div>
-            <p style="color: #475569; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+            <p style="color: var(--text-muted, #475569); font-size: 0.9rem; line-height: 1.5; margin: 0;">
                 One-page digest encapsulates 4 high-density KPI cards, dual-axis daily volume vs rejection trend,
                 3 key operational findings, 3 prescriptive corrective actions with assigned owners, and formal dual-sign-off blocks.
             </p>
@@ -1013,16 +1014,16 @@ elif page == "📑 Formal Reports":
             st.markdown("#### 📄 Document Layout Preview")
             st.markdown(f"""
             <div class="doc-preview-sheet">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0B1F3A; padding-bottom: 12px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color, #0B1F3A); padding-bottom: 12px; margin-bottom: 16px;">
                     <div>
-                        <h3 style="margin: 0; color: #0B1F3A; font-size: 1.35rem; font-weight: 800;">{config.COMPANY}</h3>
-                        <div style="color: #64748B; font-size: 0.85rem; font-weight: 600;">{title}</div>
+                        <h3 style="margin: 0; color: var(--text-heading, #0B1F3A); font-size: 1.35rem; font-weight: 800;">{config.COMPANY}</h3>
+                        <div style="color: var(--text-muted, #64748B); font-size: 0.85rem; font-weight: 600;">{title}</div>
                     </div>
                     <div style="text-align: right;">
                         <span style="background: rgba(45, 127, 249, 0.15); color: #1D4ED8; padding: 4px 10px; border-radius: 8px; font-size: 0.76rem; font-weight: 800;">
                             OFFICIAL AUDITED MIS
                         </span>
-                        <div style="color: #64748B; font-size: 0.8rem; margin-top: 4px;">Effective: {date.today():%d %b %Y}</div>
+                        <div style="color: var(--text-muted, #64748B); font-size: 0.8rem; margin-top: 4px;">Effective: {date.today():%d %b %Y}</div>
                     </div>
                 </div>
                 {f'<div class="comm-box" style="margin-bottom: 16px;"><h4>💡 Automated Executive Commentary:</h4><p>{commentary}</p></div>' if commentary else ''}
