@@ -7,6 +7,9 @@ from .theme import (
     render_sidebar_brand,
     render_sidebar_footer,
     kpi_card,
+    render_stats_strip,
+    render_progress_ring,
+    render_roi_hero,
 )
 from .charts import (
     apply_chart_theme,
@@ -22,6 +25,9 @@ __all__ = [
     "render_sidebar_brand",
     "render_sidebar_footer",
     "kpi_card",
+    "render_stats_strip",
+    "render_progress_ring",
+    "render_roi_hero",
     "apply_chart_theme",
     "INDUSTRIAL_PALETTE",
     "create_gauge_chart",

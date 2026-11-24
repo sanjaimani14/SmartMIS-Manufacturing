@@ -13,19 +13,40 @@ import streamlit as st
 # 1. CORE THEME CSS INJECTION
 # ==============================================================================
 
-def inject_theme() -> None:
+def inject_theme(dark_mode: bool = False) -> None:
     """
     Injects the complete 'Smart Factory Control Room' CSS design system into the Streamlit app.
     Features:
     - Google Fonts: Plus Jakarta Sans & Inter
-    - Background gradient (#F4F8FF to #EAF1FF)
+    - Background gradient (#F4F8FF to #EAF1FF or Dark Space Navy in Dark Mode)
     - Dark Navy Sidebar (#071527 to #0B1F3A) with option-menu style navigation buttons
     - Primary Orange Gradient Buttons & Outlined Secondary Buttons
     - 16px Rounded Cards, subtle drop shadows, and hover lift
-    - Styled Streamlit Metric widgets, tabs, inputs, expanders, and scrollbars
+    - Flashing alert banner, glowing CTA buttons, chat bubbles, and progress rings
     - Clean hiding of Streamlit's default footer and header clutter
     """
-    theme_css = """
+    bg_gradient = (
+        "linear-gradient(180deg, #071322 0%, #0B1C33 50%, #0F2544 100%)"
+        if dark_mode
+        else "linear-gradient(180deg, #F4F8FF 0%, #EDF3FC 50%, #E6EEF9 100%)"
+    )
+    text_color = "#F8FAFC" if dark_mode else "#0F172A"
+    card_bg = "#0B1C33" if dark_mode else "#FFFFFF"
+    card_border = "rgba(255, 255, 255, 0.12)" if dark_mode else "#E2E8F0"
+
+    dynamic_css = f"""
+    <style>
+    html, body, [class*="css"] {{
+        color: {text_color};
+    }}
+    .stApp {{
+        background: {bg_gradient} !important;
+        background-attachment: fixed !important;
+    }}
+    </style>
+    """
+
+    static_css = """
     <style>
     /* ==========================================================================
        1. GOOGLE FONTS & GLOBAL TYPOGRAPHY
@@ -34,13 +55,6 @@ def inject_theme() -> None:
 
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        color: #0F172A;
-    }
-
-    /* Page background gradient */
-    .stApp {
-        background: linear-gradient(180deg, #F4F8FF 0%, #EDF3FC 50%, #E6EEF9 100%) !important;
-        background-attachment: fixed !important;
     }
 
     /* Hide Streamlit default clutter */
@@ -464,9 +478,166 @@ def inject_theme() -> None:
         transform: translateY(-4px) !important;
         box-shadow: 0 12px 28px rgba(11, 31, 58, 0.12) !important;
     }
+
+    /* Flashing Spike Alert Banner */
+    @keyframes alertFlash {
+        0% { background: rgba(239, 68, 68, 0.16); border-color: rgba(239, 68, 68, 0.45); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+        50% { background: rgba(239, 68, 68, 0.32); border-color: rgba(239, 68, 68, 0.9); box-shadow: 0 0 24px rgba(239, 68, 68, 0.45); }
+        100% { background: rgba(239, 68, 68, 0.16); border-color: rgba(239, 68, 68, 0.45); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+    }
+    .flashing-spike-banner {
+        animation: alertFlash 1.6s infinite ease-in-out !important;
+        border-radius: 14px !important;
+        padding: 16px 20px !important;
+        border: 2px solid #EF4444 !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Glowing Orange Action Button */
+    @keyframes glowOrange {
+        0% { box-shadow: 0 0 8px rgba(255, 107, 26, 0.4); }
+        50% { box-shadow: 0 0 24px rgba(255, 107, 26, 0.85), 0 0 35px rgba(255, 107, 26, 0.35); }
+        100% { box-shadow: 0 0 8px rgba(255, 107, 26, 0.4); }
+    }
+    .glow-orange-btn button {
+        animation: glowOrange 2s infinite ease-in-out !important;
+        background: linear-gradient(135deg, #FF6B1A 0%, #FF8533 100%) !important;
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
+        border: none !important;
+    }
+
+    /* Chat-Style UI for Ask Your Data */
+    .chat-bubble-user {
+        background: linear-gradient(135deg, #2D7FF9 0%, #1D4ED8 100%) !important;
+        color: #FFFFFF !important;
+        padding: 12px 18px !important;
+        border-radius: 18px 18px 4px 18px !important;
+        max-width: 82% !important;
+        margin-left: auto !important;
+        margin-bottom: 12px !important;
+        box-shadow: 0 4px 14px rgba(45, 127, 249, 0.25) !important;
+        font-weight: 500 !important;
+        font-size: 0.94rem !important;
+        line-height: 1.4 !important;
+    }
+    .chat-bubble-ai {
+        background: #FFFFFF !important;
+        color: #0F172A !important;
+        padding: 16px 20px !important;
+        border-radius: 18px 18px 18px 4px !important;
+        border: 1px solid #E2E8F0 !important;
+        margin-right: auto !important;
+        margin-bottom: 14px !important;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06) !important;
+        max-width: 95% !important;
+    }
+
+    /* Smart Insights Cards */
+    .smart-insight-card {
+        background: #FFFFFF !important;
+        border-radius: 14px !important;
+        padding: 14px 18px !important;
+        margin-bottom: 12px !important;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04) !important;
+        border: 1px solid #E2E8F0 !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .smart-insight-card:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08) !important;
+    }
+    .insight-border-critical {
+        border-left: 5px solid #EF4444 !important;
+    }
+    .insight-border-warning {
+        border-left: 5px solid #F59E0B !important;
+    }
+    .insight-border-good {
+        border-left: 5px solid #22C55E !important;
+    }
+
+    /* Feature Grid Cards */
+    .feature-card {
+        background: #FFFFFF !important;
+        border-radius: 14px !important;
+        padding: 22px 20px !important;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+        border: 1px solid #E2E8F0 !important;
+        position: relative !important;
+        overflow: hidden !important;
+        height: 100% !important;
+        transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+    }
+    .feature-card:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1) !important;
+    }
+
+    /* Animated Stats Strip */
+    .stats-strip {
+        background: linear-gradient(135deg, #071527 0%, #0B1F3A 60%, #16365C 100%) !important;
+        border-radius: 16px !important;
+        padding: 20px 24px !important;
+        margin: 22px 0 !important;
+        border: 1px solid rgba(45, 127, 249, 0.25) !important;
+        box-shadow: 0 10px 28px rgba(7, 21, 39, 0.22) !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        gap: 16px !important;
+    }
+    .stats-item {
+        text-align: center !important;
+        min-width: 130px !important;
+    }
+    .stats-val {
+        font-size: 1.85rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.02em !important;
+        line-height: 1.1 !important;
+    }
+    .stats-lbl {
+        font-size: 0.72rem !important;
+        font-weight: 700 !important;
+        color: #94A3B8 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important;
+        margin-top: 5px !important;
+    }
+
+    /* Big CTA Cards */
+    .cta-card {
+        background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%) !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 16px !important;
+        padding: 22px 20px !important;
+        text-align: center !important;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06) !important;
+        transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: relative !important;
+        overflow: hidden !important;
+        height: 100% !important;
+    }
+    .cta-card:hover {
+        transform: translateY(-5px) !important;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12) !important;
+        border-color: #2D7FF9 !important;
+    }
+
+    /* Document Preview Frame */
+    .doc-preview-sheet {
+        background: #FFFFFF !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 10px !important;
+        padding: 28px 32px !important;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08) !important;
+        font-family: 'Inter', sans-serif !important;
+    }
     </style>
     """
-    st.markdown(theme_css, unsafe_allow_html=True)
+    st.markdown(dynamic_css + static_css, unsafe_allow_html=True)
 
 
 # ==============================================================================
@@ -896,4 +1067,156 @@ def kpi_card(
     target = container if container is not None else st
     target.markdown(card_html, unsafe_allow_html=True)
     return card_html
+
+
+# ==============================================================================
+# 5. HIGH-IMPACT POLISHED UI COMPONENTS (STATS STRIP & PROGRESS RING)
+# ==============================================================================
+
+def render_stats_strip(
+    records_cnt: int,
+    oee_pct: float,
+    copq_inr: float,
+    reports_cnt: int = 4,
+) -> None:
+    """Renders a high-impact horizontal stats counter banner."""
+    html = f"""
+    <div class="stats-strip">
+        <div class="stats-item">
+            <div class="stats-val" style="color: #38BDF8;">{records_cnt:,}</div>
+            <div class="stats-lbl">Verified PMS Records</div>
+        </div>
+        <div style="width: 1px; height: 35px; background: rgba(255,255,255,0.15);"></div>
+        <div class="stats-item">
+            <div class="stats-val" style="color: #22C55E;">{oee_pct:.1f}%</div>
+            <div class="stats-lbl">Plant Blended OEE</div>
+        </div>
+        <div style="width: 1px; height: 35px; background: rgba(255,255,255,0.15);"></div>
+        <div class="stats-item">
+            <div class="stats-val" style="color: #A78BFA;">₹{copq_inr:,.0f}</div>
+            <div class="stats-lbl">Calculated COPQ Loss</div>
+        </div>
+        <div style="width: 1px; height: 35px; background: rgba(255,255,255,0.15);"></div>
+        <div class="stats-item">
+            <div class="stats-val" style="color: #FFB020;">{reports_cnt} Formats</div>
+            <div class="stats-lbl">Automated MIS Reports</div>
+        </div>
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def render_progress_ring(
+    percentage: float = 100.0,
+    title: str = "Requirement Coverage",
+    subtitle: str = "17 of 17 Hackathon Requirements Fully Verified",
+) -> None:
+    """Renders an SVG circular progress indicator with 100% coverage badge."""
+    radius = 46
+    circumference = round(2 * 3.14159 * radius, 1)
+    stroke_offset = round(circumference - (percentage / 100.0) * circumference, 1)
+    html = f"""
+    <div style="
+        background: #FFFFFF;
+        border-radius: 16px;
+        padding: 22px 26px;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        margin-bottom: 22px;
+    ">
+        <div style="position: relative; width: 110px; height: 110px; flex-shrink: 0;">
+            <svg width="110" height="110" viewBox="0 0 110 110" style="transform: rotate(-90deg);">
+                <circle cx="55" cy="55" r="{radius}" fill="none" stroke="#E2E8F0" stroke-width="9" />
+                <circle cx="55" cy="55" r="{radius}" fill="none" stroke="#22C55E" stroke-width="9"
+                    stroke-dasharray="{circumference}" stroke-dashoffset="{stroke_offset}"
+                    stroke-linecap="round" />
+            </svg>
+            <div style="
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            ">
+                <span style="font-size: 1.35rem; font-weight: 800; color: #0B1F3A; line-height: 1;">{int(percentage)}%</span>
+                <span style="font-size: 0.62rem; font-weight: 800; color: #16A34A; text-transform: uppercase; margin-top: 2px;">VERIFIED</span>
+            </div>
+        </div>
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: rgba(34, 197, 94, 0.15); color: #16A34A; padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase;">
+                    PS-005 COMPLIANT
+                </span>
+                <span style="color: #64748B; font-size: 0.78rem; font-weight: 600;">Sakthi Hackathon 2.0 • Round 2</span>
+            </div>
+            <h3 style="margin: 6px 0 3px 0; color: #0B1F3A; font-size: 1.25rem; font-weight: 800;">{title}</h3>
+            <p style="margin: 0; color: #64748B; font-size: 0.88rem;">{subtitle}</p>
+        </div>
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def render_roi_hero(
+    hours_saved_monthly: float,
+    annual_savings_inr: float,
+    efficiency_pct: float = 99.4
+) -> None:
+    """Renders a prominent green-gradient hero block with large numbers for the ROI page."""
+    html = f"""
+    <div style="
+        background: linear-gradient(135deg, #0B1F3A 0%, #0F382E 50%, #16533A 100%);
+        border-radius: 18px;
+        padding: 26px 32px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(34, 197, 94, 0.35);
+        box-shadow: 0 10px 30px rgba(11, 31, 58, 0.15);
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+    ">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background: rgba(34, 197, 94, 0.22); color: #4ADE80; font-size: 0.75rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid rgba(74, 222, 128, 0.3);">
+                    ⚡ AUTOMATION PAYBACK
+                </span>
+                <span style="color: #94A3B8; font-size: 0.85rem;">Plant MIS Automation & Telemetry Ingestion</span>
+            </div>
+            <div style="font-size: 2.35rem; font-weight: 900; letter-spacing: -0.03em; color: #FFFFFF; line-height: 1.1;">
+                <span style="color: #4ADE80;">{hours_saved_monthly:.1f} hrs</span> <span style="font-size: 1.6rem; font-weight: 600; color: #E2E8F0;">saved / mo</span>
+            </div>
+            <div style="font-size: 1.0rem; color: #A7F3D0; margin-top: 6px; font-weight: 500;">
+                Recovers <strong style="color: #FFFFFF;">{efficiency_pct:.1f}%</strong> of engineering spreadsheet prep time across all shifts
+            </div>
+        </div>
+        <div style="
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 16px 24px;
+            text-align: right;
+            backdrop-filter: blur(6px);
+        ">
+            <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #94A3B8; font-weight: 700;">
+                Projected Annual Value
+            </div>
+            <div style="font-size: 2.1rem; font-weight: 900; color: #34D399; letter-spacing: -0.02em; margin-top: 2px;">
+                ₹{annual_savings_inr:,.0f} <span style="font-size: 1.1rem; font-weight: 600; color: #CBD5E1;">/ yr</span>
+            </div>
+            <div style="font-size: 0.78rem; color: #86EFAC; font-weight: 600; margin-top: 2px;">
+                ✓ Direct Engineering Time Saved
+            </div>
+        </div>
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
+
 

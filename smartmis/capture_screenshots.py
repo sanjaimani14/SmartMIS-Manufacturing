@@ -49,21 +49,11 @@ def run_capture():
         print("Streamlit is up! Launching Playwright Chromium...")
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
-            page = browser.new_page(viewport={"width": 1440, "height": 900})
 
-            # 1. Open app
-            page.goto(URL, wait_until="networkidle")
-            time.sleep(3)
-
-            # Check if login screen is presented
-            login_user = page.locator('input[aria-label="Username"]')
-            if login_user.count() > 0:
-                print("Logging in as admin...")
-                login_user.fill("admin")
-                page.locator('input[aria-label="Password"]').fill("admin123")
-                page.locator('button:has-text("🔐 Secure Enterprise Login")').click()
-                time.sleep(3)
-                page.wait_for_load_state("networkidle")
+            resolutions = [
+                ({"width": 1440, "height": 900}, "1440x900", True),
+                ({"width": 1366, "height": 768}, "1366x768", False),
+            ]
 
             pages_to_capture = [
                 ("🏠 Home & Overview", "1_home_and_overview.png"),
@@ -80,19 +70,50 @@ def run_capture():
                 ("📊 Power BI Integration", "12_power_bi_integration.png"),
             ]
 
-            for label, fname in pages_to_capture:
-                print(f"Navigating to '{label}'...")
-                target = page.locator(f'label:has-text("{label}")')
-                if target.count() > 0:
-                    target.click()
-                    time.sleep(2.5)
+            for vp, res_name, is_default in resolutions:
+                print(f"\n--- Capturing suite at resolution: {res_name} ({vp['width']}x{vp['height']}) ---")
+                res_dir = os.path.join(SCREENSHOTS_DIR, res_name)
+                os.makedirs(res_dir, exist_ok=True)
+
+                context = browser.new_context(viewport=vp)
+                page = context.new_page()
+
+                # 1. Open app
+                page.goto(URL, wait_until="networkidle")
+                time.sleep(3)
+
+                # Check if login screen is presented
+                login_user = page.locator('input[aria-label="Username"]')
+                if login_user.count() > 0:
+                    print("Logging in as admin...")
+                    login_user.fill("admin")
+                    page.locator('input[aria-label="Password"]').fill("admin123")
+                    page.locator('button:has-text("🔐 Secure Enterprise Login")').click()
+                    time.sleep(3)
                     page.wait_for_load_state("networkidle")
-                out_path = os.path.join(SCREENSHOTS_DIR, fname)
-                page.screenshot(path=out_path, full_page=False)
-                print(f"Captured: {out_path}")
+
+                for label, fname in pages_to_capture:
+                    print(f"[{res_name}] Navigating to '{label}'...")
+                    target = page.locator(f'label:has-text("{label}")')
+                    if target.count() > 0:
+                        target.click()
+                        time.sleep(2.5)
+                        page.wait_for_load_state("networkidle")
+                    
+                    # Capture in resolution subfolder
+                    out_path = os.path.join(res_dir, fname)
+                    page.screenshot(path=out_path, full_page=False)
+                    print(f"Captured: {out_path}")
+
+                    # Also store in base SCREENSHOTS_DIR if default resolution
+                    if is_default:
+                        base_out = os.path.join(SCREENSHOTS_DIR, fname)
+                        page.screenshot(path=base_out, full_page=False)
+
+                context.close()
 
             browser.close()
-            print("ALL PLAYWRIGHT SCREENSHOTS CAPTURED SUCCESSFULLY!")
+            print("\nALL PLAYWRIGHT SCREENSHOTS (1440x900 & 1366x768) CAPTURED SUCCESSFULLY!")
     finally:
         print("Terminating Streamlit process...")
         proc.terminate()
